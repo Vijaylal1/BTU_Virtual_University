@@ -32,3 +32,4 @@ data/chapters/*.txt
 .vercel/
 vijaylal/ 
 *.dll 
+btu_backup.sql 
