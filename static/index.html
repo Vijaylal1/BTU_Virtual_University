@@ -1,0 +1,2570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BTU Virtual University</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" onload="this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a1a;
+  --bg-card: #111128;
+  --bg-elevated: #16163a;
+  --bg-glass: rgba(17,17,40,0.7);
+  --border: rgba(255,255,255,0.06);
+  --border-hover: rgba(255,255,255,0.12);
+  --purple: #7c5cbf;
+  --purple-light: #a07ee8;
+  --purple-glow: rgba(124,92,191,0.25);
+  --green: #3ecf8e;
+  --green-dark: #2eaf74;
+  --coral: #ff6b6b;
+  --yellow: #ffd93d;
+  --blue: #4facfe;
+  --cyan: #00d4ff;
+  --text: #e8edf5;
+  --text-secondary: #8a94a8;
+  --muted: #5a6478;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.3);
+  --shadow-lg: 0 12px 48px rgba(0,0,0,0.5);
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --max-w: 1200px;
+  --nav-h: 64px;
+}
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+a { color: var(--purple-light); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.hidden { display: none !important; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.14); }
+
+/* ── UTILITIES ── */
+.container { max-width: var(--max-w); margin: 0 auto; padding: 0 2rem; }
+.fade-in { animation: fadeIn 0.5s ease forwards; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   AUTH SCREEN
+   ════════════════════════════════════════════════════════════════════════════ */
+#auth-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(124,92,191,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(62,207,142,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(79,172,254,0.04) 0%, transparent 50%),
+    var(--bg);
+  padding: 2rem;
+}
+.auth-container {
+  display: flex;
+  width: 100%;
+  max-width: 960px;
+  min-height: 580px;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+}
+.auth-hero {
+  flex: 1.1;
+  background: linear-gradient(160deg, #0d0d2b 0%, #161645 50%, #1a1a50 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.auth-hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 50%, rgba(124,92,191,0.1) 0%, transparent 40%);
+  animation: float 12s ease-in-out infinite;
+}
+.auth-hero-content { position: relative; z-index: 1; text-align: center; }
+.auth-logo { font-size: 4rem; margin-bottom: 1.25rem; filter: drop-shadow(0 4px 12px rgba(124,92,191,0.3)); }
+.auth-brand { font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, var(--purple-light), var(--green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.6rem; line-height: 1.2; }
+.auth-tagline { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7; max-width: 300px; margin: 0 auto 2rem; }
+.auth-features { display: flex; flex-direction: column; gap: 0.7rem; width: 100%; max-width: 280px; }
+.auth-feat { display: flex; align-items: center; gap: 0.75rem; font-size: 0.82rem; color: var(--text-secondary); }
+.auth-feat-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; }
+.fi-purple { background: rgba(124,92,191,0.12); border: 1px solid rgba(124,92,191,0.2); }
+.fi-green  { background: rgba(62,207,142,0.12); border: 1px solid rgba(62,207,142,0.2); }
+.fi-blue   { background: rgba(79,172,254,0.12); border: 1px solid rgba(79,172,254,0.2); }
+.fi-yellow { background: rgba(255,217,61,0.12); border: 1px solid rgba(255,217,61,0.2); }
+
+.auth-form-panel {
+  flex: 0.9;
+  background: var(--bg-card);
+  padding: 3rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.form-head { margin-bottom: 2rem; }
+.form-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.4rem; }
+.form-subtitle { color: var(--text-secondary); font-size: 0.85rem; }
+.field { margin-bottom: 1.25rem; }
+.field label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.field input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.field input::placeholder { color: var(--muted); }
+.field input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px var(--purple-glow); }
+.err-box { display: none; padding: 0.7rem 1rem; background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.2); border-radius: var(--radius-sm); color: var(--coral); font-size: 0.82rem; margin-bottom: 1rem; }
+.btn-primary {
+  width: 100%;
+  padding: 0.85rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition);
+  color: #fff;
+}
+.btn-purple-bg {
+  background: linear-gradient(135deg, #7c5cbf, #5a3f9e);
+  box-shadow: 0 4px 16px rgba(124,92,191,0.3);
+}
+.btn-purple-bg:hover { box-shadow: 0 6px 24px rgba(124,92,191,0.4); transform: translateY(-1px); }
+.btn-purple-bg:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.auth-switch { text-align: center; margin-top: 1.5rem; font-size: 0.82rem; color: var(--text-secondary); }
+.auth-switch a { cursor: pointer; font-weight: 600; }
+
+@media (max-width: 768px) {
+  .auth-container { flex-direction: column; min-height: auto; }
+  .auth-hero { padding: 2rem 1.5rem; }
+  .auth-features { display: none; }
+  .auth-form-panel { padding: 2rem 1.5rem; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   TOP NAVBAR
+   ════════════════════════════════════════════════════════════════════════════ */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-h);
+  background: rgba(10,10,26,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  padding: 0 2rem;
+}
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 800;
+  font-size: 1rem;
+  margin-right: 2.5rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.nav-brand-icon { font-size: 1.4rem; }
+.nav-brand-text { background: linear-gradient(135deg, var(--purple-light), var(--green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.nav-links { display: flex; gap: 0.25rem; flex: 1; }
+.nav-link {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  white-space: nowrap;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+.nav-link:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+.nav-link.active { color: var(--text); background: rgba(124,92,191,0.12); }
+.nav-link-icon { font-size: 1rem; }
+.nav-right { display: flex; align-items: center; gap: 1rem; margin-left: auto; }
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0.75rem 0.35rem 0.35rem;
+  border-radius: 50px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  cursor: default;
+}
+.nav-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple), var(--purple-light));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+}
+.nav-username { font-size: 0.82rem; font-weight: 600; }
+.btn-signout {
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-xs);
+  background: rgba(255,107,107,0.08);
+  border: 1px solid rgba(255,107,107,0.15);
+  color: var(--coral);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: inherit;
+}
+.btn-signout:hover { background: rgba(255,107,107,0.14); border-color: rgba(255,107,107,0.3); }
+
+/* Hamburger for mobile */
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 0.4rem;
+}
+@media (max-width: 768px) {
+  .nav-hamburger { display: block; }
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: var(--nav-h);
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 0.5rem;
+    gap: 0.25rem;
+    box-shadow: var(--shadow);
+  }
+  .nav-links.mobile-open { display: flex; }
+  .nav-user .nav-username { display: none; }
+  .container { padding: 0 1rem; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   PAGES – each is a full-screen section
+   ════════════════════════════════════════════════════════════════════════════ */
+.page {
+  display: none;
+  padding-top: calc(var(--nav-h) + 2rem);
+  min-height: 100vh;
+  padding-bottom: 3rem;
+}
+.page.active { display: block; animation: fadeIn 0.35s ease; }
+
+/* ── HOME / DASHBOARD ───────────────────────────────────────────────────── */
+.hero {
+  text-align: center;
+  padding: 3rem 2rem 2rem;
+  position: relative;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(124,92,191,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  background: rgba(124,92,191,0.08);
+  border: 1px solid rgba(124,92,191,0.2);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--purple-light);
+  margin-bottom: 1.5rem;
+}
+.hero h1 {
+  font-size: 2.8rem;
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #fff 30%, var(--purple-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.hero p {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  max-width: 560px;
+  margin: 0 auto 2rem;
+  line-height: 1.7;
+}
+.hero-actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+.hero-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition);
+  border: none;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.hero-btn-primary {
+  background: linear-gradient(135deg, #7c5cbf, #5a3f9e);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(124,92,191,0.35);
+}
+.hero-btn-primary:hover { box-shadow: 0 8px 32px rgba(124,92,191,0.45); transform: translateY(-2px); }
+.hero-btn-secondary {
+  background: rgba(62,207,142,0.1);
+  border: 1px solid rgba(62,207,142,0.25);
+  color: var(--green);
+}
+.hero-btn-secondary:hover { background: rgba(62,207,142,0.18); }
+.hero-btn-tertiary {
+  background: rgba(255,217,61,0.08);
+  border: 1px solid rgba(255,217,61,0.2);
+  color: var(--yellow);
+}
+.hero-btn-tertiary:hover { background: rgba(255,217,61,0.14); }
+
+/* Stats bar */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin: 3rem auto 0;
+  max-width: var(--max-w);
+  padding: 0 2rem;
+}
+@media (max-width: 768px) { .stats-bar { grid-template-columns: repeat(2, 1fr); } }
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition);
+}
+.stat-card:hover { border-color: var(--border-hover); transform: translateY(-2px); box-shadow: var(--shadow); }
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+.sc-purple::after { background: linear-gradient(90deg, var(--purple), var(--purple-light)); }
+.sc-green::after  { background: linear-gradient(90deg, var(--green), var(--green-dark)); }
+.sc-yellow::after { background: linear-gradient(90deg, var(--yellow), #f0c930); }
+.sc-blue::after   { background: linear-gradient(90deg, var(--blue), var(--cyan)); }
+.stat-icon { font-size: 1.6rem; margin-bottom: 0.6rem; }
+.stat-value { font-size: 2rem; font-weight: 900; }
+.stat-label { font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.3rem; }
+
+/* Professors section */
+.section-heading {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-bottom: 0.4rem;
+}
+.section-sub {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+.prof-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+.prof-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all var(--transition);
+  cursor: default;
+}
+.prof-card:hover { border-color: var(--border-hover); transform: translateY(-2px); box-shadow: var(--shadow); }
+.prof-card.active-prof { border-color: rgba(62,207,142,0.3); }
+.prof-av {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.prof-info { flex: 1; min-width: 0; }
+.prof-name { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.15rem; }
+.prof-sub { font-size: 0.78rem; color: var(--text-secondary); }
+/* Feature cards */
+.feature-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.feature-card {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  padding: 1.1rem 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.feature-card:hover { transform: translateX(4px); box-shadow: var(--shadow); }
+.fc-purple:hover { border-color: rgba(124,92,191,0.35); background: rgba(124,92,191,0.05); }
+.fc-green:hover  { border-color: rgba(62,207,142,0.35); background: rgba(62,207,142,0.04); }
+.fc-yellow:hover { border-color: rgba(255,217,61,0.35); background: rgba(255,217,61,0.04); }
+.fc-blue:hover   { border-color: rgba(79,172,254,0.35); background: rgba(79,172,254,0.04); }
+.fc-coral:hover  { border-color: rgba(255,107,107,0.35); background: rgba(255,107,107,0.04); }
+.fc-cyan:hover   { border-color: rgba(0,212,255,0.35); background: rgba(0,212,255,0.04); }
+.fc-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.fc-purple .fc-icon { background: rgba(124,92,191,0.12); border: 1px solid rgba(124,92,191,0.2); }
+.fc-green .fc-icon  { background: rgba(62,207,142,0.12); border: 1px solid rgba(62,207,142,0.2); }
+.fc-yellow .fc-icon { background: rgba(255,217,61,0.12); border: 1px solid rgba(255,217,61,0.2); }
+.fc-blue .fc-icon   { background: rgba(79,172,254,0.12); border: 1px solid rgba(79,172,254,0.2); }
+.fc-coral .fc-icon  { background: rgba(255,107,107,0.12); border: 1px solid rgba(255,107,107,0.2); }
+.fc-cyan .fc-icon   { background: rgba(0,212,255,0.12); border: 1px solid rgba(0,212,255,0.2); }
+.fc-body { flex: 1; min-width: 0; }
+.fc-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.2rem; }
+.fc-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; }
+.fc-arrow {
+  font-size: 1.2rem;
+  color: var(--muted);
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+.feature-card:hover .fc-arrow { color: var(--text); transform: translateX(4px); }
+.fc-purple:hover .fc-arrow { color: var(--purple-light); }
+.fc-green:hover .fc-arrow  { color: var(--green); }
+.fc-yellow:hover .fc-arrow { color: var(--yellow); }
+.fc-blue:hover .fc-arrow   { color: var(--blue); }
+.fc-coral:hover .fc-arrow  { color: var(--coral); }
+.fc-cyan:hover .fc-arrow   { color: var(--cyan); }
+
+@media (max-width: 768px) {
+  .feature-card { padding: 1rem; gap: 0.85rem; }
+  .fc-desc { display: none; }
+}
+
+.status-badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 50px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+.badge-live { background: rgba(62,207,142,0.1); color: var(--green); border: 1px solid rgba(62,207,142,0.25); }
+.badge-soon { background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid var(--border); }
+
+/* ── CHAT PAGE ──────────────────────────────────────────────────────────── */
+.chat-page {
+  padding-top: var(--nav-h);
+  height: 100vh;
+  display: none;
+  flex-direction: column;
+}
+.chat-page.active { display: flex; }
+
+.chat-header {
+  padding: 0.85rem 2rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+  background: var(--bg);
+}
+.pipeline-agents {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+}
+.pipe-agent {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  transition: all 0.4s ease;
+  min-width: 0;
+}
+.pipe-agent.active-pipe {
+  border-color: rgba(255,255,255,0.2);
+  box-shadow: 0 0 12px rgba(255,255,255,0.05);
+}
+.pipe-agent.active-pipe.pipe-dean-active  { border-color: rgba(79,172,254,0.4); box-shadow: 0 0 12px rgba(79,172,254,0.15); }
+.pipe-agent.active-pipe.pipe-coach-active { border-color: rgba(62,207,142,0.4); box-shadow: 0 0 12px rgba(62,207,142,0.15); }
+.pipe-agent.active-pipe.pipe-prof-active  { border-color: rgba(124,92,191,0.4); box-shadow: 0 0 12px rgba(124,92,191,0.15); }
+.pipe-av {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+.pipe-av-blue   { background: rgba(79,172,254,0.12); }
+.pipe-av-green  { background: rgba(62,207,142,0.12); }
+.pipe-av-purple { background: rgba(124,92,191,0.12); }
+.pipe-label { font-size: 0.78rem; font-weight: 700; white-space: nowrap; }
+.pipe-role { font-size: 0.65rem; color: var(--muted); white-space: nowrap; display: none; }
+.pipe-arrow { color: var(--muted); font-size: 0.85rem; flex-shrink: 0; }
+@media (min-width: 700px) { .pipe-role { display: block; } }
+@media (max-width: 500px) { .pipe-label { display: none; } .pipe-agent { padding: 0.4rem; } }
+.chat-header-badge {
+  margin-left: auto;
+  padding: 0.3rem 0.8rem;
+  border-radius: 50px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: rgba(124,92,191,0.08);
+  border: 1px solid rgba(124,92,191,0.2);
+  color: var(--purple-light);
+}
+
+#messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem 0;
+}
+.msg-wrap {
+  padding: 0.35rem 2rem;
+  transition: background var(--transition);
+}
+.msg-wrap:hover { background: rgba(255,255,255,0.015); }
+.msg-inner {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  gap: 1rem;
+}
+.msg-wrap.user-msg { background: rgba(124,92,191,0.03); }
+.msg-av {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+.av-user { background: linear-gradient(135deg, var(--purple), var(--purple-light)); font-weight: 700; color: #fff; }
+.av-ai { background: var(--bg-elevated); border: 1px solid var(--border); }
+.msg-content { flex: 1; min-width: 0; }
+.msg-meta { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; }
+.msg-author { font-size: 0.82rem; font-weight: 700; }
+.agent-tag {
+  padding: 0.12rem 0.5rem;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.tag-dean  { background: rgba(79,172,254,.1);  color: var(--blue);         border: 1px solid rgba(79,172,254,.2); }
+.tag-coach { background: rgba(62,207,142,.1);  color: var(--green);        border: 1px solid rgba(62,207,142,.2); }
+.tag-prof  { background: rgba(124,92,191,.1);  color: var(--purple-light); border: 1px solid rgba(124,92,191,.2); }
+.tag-you   { background: rgba(255,217,61,.08); color: var(--yellow);       border: 1px solid rgba(255,217,61,.15); }
+.tag-err   { background: rgba(255,107,107,.1); color: var(--coral);        border: 1px solid rgba(255,107,107,.2); }
+.msg-latency { font-size: 0.72rem; color: var(--muted); }
+.msg-text {
+  font-size: 0.9rem;
+  line-height: 1.75;
+  color: var(--text);
+}
+.msg-text code { background: rgba(255,255,255,0.06); padding: 0.12em 0.4em; border-radius: 4px; font-family: 'Cascadia Code', 'Fira Code', monospace; font-size: 0.85em; }
+.rag-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.68rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 50px;
+  background: rgba(62,207,142,.06);
+  border: 1px solid rgba(62,207,142,.15);
+  color: var(--green);
+}
+.thinking-toggle {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0;
+  user-select: none;
+  margin-top: 0.5rem;
+  transition: color var(--transition);
+}
+.thinking-toggle:hover { color: var(--text); }
+.thinking-box {
+  background: rgba(255,217,61,0.03);
+  border: 1px solid rgba(255,217,61,0.1);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-top: 0.5rem;
+  display: none;
+}
+.thinking-box.open { display: block; }
+
+/* Chat starters */
+.chat-starters {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 1.5rem;
+  padding: 3rem 2rem;
+}
+.starters-icon { font-size: 3rem; opacity: 0.6; animation: float 4s ease-in-out infinite; }
+.starters-heading { font-size: 1.2rem; font-weight: 700; }
+.starters-sub { font-size: 0.85rem; color: var(--text-secondary); max-width: 400px; text-align: center; line-height: 1.6; }
+.starters-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 640px;
+}
+@media (max-width: 640px) { .starters-grid { grid-template-columns: 1fr; } }
+.starter-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.25rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+.starter-card:hover { border-color: var(--purple); color: var(--text); transform: translateY(-2px); box-shadow: 0 4px 20px rgba(124,92,191,0.15); }
+.starter-card strong {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--purple-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.35rem;
+}
+
+/* Typing indicator */
+.typing-row { padding: 0.35rem 2rem; }
+.typing-inner { max-width: 800px; margin: 0 auto; display: flex; gap: 1rem; }
+.typing-dots { display: flex; gap: 5px; padding: 0.85rem 1.1rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+.td { width: 7px; height: 7px; background: var(--text-secondary); border-radius: 50%; animation: bounce 1.2s infinite; }
+.td:nth-child(2) { animation-delay: .2s; }
+.td:nth-child(3) { animation-delay: .4s; }
+@keyframes bounce { 0%,60%,100% { transform: translateY(0) } 30% { transform: translateY(-6px) } }
+
+/* Chat input bar */
+.chat-input-bar {
+  padding: 1rem 2rem 1.5rem;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+  flex-shrink: 0;
+}
+.chat-input-inner {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-end;
+}
+#chat-input {
+  flex: 1;
+  padding: 0.85rem 1.1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  color: var(--text);
+  font-size: 0.9rem;
+  resize: none;
+  outline: none;
+  max-height: 140px;
+  font-family: inherit;
+  line-height: 1.5;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+#chat-input::placeholder { color: var(--muted); }
+#chat-input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px var(--purple-glow); }
+.btn-send {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #7c5cbf, #5a3f9e);
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.btn-send:hover { box-shadow: 0 4px 16px rgba(124,92,191,0.35); transform: translateY(-1px); }
+.btn-send:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* ── LIBRARY PAGE ───────────────────────────────────────────────────────── */
+.library-hero {
+  text-align: center;
+  padding: 2rem 2rem 0;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.library-hero h1 { font-size: 2rem; font-weight: 900; margin-bottom: 0.5rem; }
+.library-hero p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.6; }
+.search-box {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+.search-input-row {
+  display: flex;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+#library-input {
+  flex: 1;
+  padding: 0.9rem 1.2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  color: var(--text);
+  font-size: 0.92rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+#library-input::placeholder { color: var(--muted); }
+#library-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(62,207,142,0.15); }
+.btn-search {
+  padding: 0.9rem 1.6rem;
+  background: linear-gradient(135deg, var(--green), var(--green-dark));
+  border: none;
+  border-radius: 14px;
+  color: #0a1a14;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+.btn-search:hover { box-shadow: 0 4px 16px rgba(62,207,142,0.3); transform: translateY(-1px); }
+.btn-search:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.chip-row { display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: center; }
+.s-chip {
+  padding: 0.35rem 0.85rem;
+  background: rgba(62,207,142,0.06);
+  border: 1px solid rgba(62,207,142,0.18);
+  border-radius: 50px;
+  font-size: 0.78rem;
+  color: var(--green);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.s-chip:hover { background: rgba(62,207,142,0.14); border-color: rgba(62,207,142,0.35); transform: translateY(-1px); }
+.library-results {
+  max-width: 800px;
+  margin: 2rem auto 0;
+  padding: 0 2rem;
+}
+.result-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  animation: slideUp 0.4s ease;
+}
+.result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.result-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--green); }
+.result-meta { font-size: 0.75rem; color: var(--text-secondary); display: flex; gap: 0.6rem; }
+.result-body { font-size: 0.9rem; line-height: 1.8; }
+.ch-chips { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-top: 1rem; }
+.ch-chip {
+  font-size: 0.72rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 50px;
+  background: rgba(62,207,142,0.07);
+  border: 1px solid rgba(62,207,142,0.2);
+  color: var(--green);
+}
+
+/* Empty states */
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: var(--text-secondary);
+}
+.empty-state-icon { font-size: 3rem; opacity: 0.35; margin-bottom: 1rem; }
+.empty-state-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 0.4rem; }
+.empty-state-sub { font-size: 0.85rem; line-height: 1.6; max-width: 320px; margin: 0 auto; }
+
+/* ── DOUBT PAGE ─────────────────────────────────────────────────────────── */
+.doubt-hero {
+  text-align: center;
+  padding: 2rem 2rem 0;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.doubt-hero h1 { font-size: 2rem; font-weight: 900; margin-bottom: 0.5rem; }
+.doubt-hero p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.6; }
+.doubt-box {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+.doubt-input-row {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+}
+.doubt-field { flex: 1; }
+.doubt-field label, .chapter-field label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.45rem;
+}
+#doubt-input {
+  width: 100%;
+  padding: 0.9rem 1.2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  color: var(--text);
+  font-size: 0.92rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+#doubt-input::placeholder { color: var(--muted); }
+#doubt-input:focus { border-color: var(--yellow); box-shadow: 0 0 0 3px rgba(255,217,61,0.12); }
+.chapter-field { flex-shrink: 0; }
+#chapter-hint {
+  width: 90px;
+  padding: 0.9rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  color: var(--text);
+  font-size: 0.92rem;
+  font-family: inherit;
+  outline: none;
+  text-align: center;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+#chapter-hint::placeholder { color: var(--muted); }
+#chapter-hint:focus { border-color: var(--yellow); box-shadow: 0 0 0 3px rgba(255,217,61,0.12); }
+.btn-doubt {
+  padding: 0.9rem 1.5rem;
+  background: linear-gradient(135deg, var(--yellow), #f0c930);
+  border: none;
+  border-radius: 14px;
+  color: #1a1400;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+.btn-doubt:hover { box-shadow: 0 4px 16px rgba(255,217,61,0.3); transform: translateY(-1px); }
+.btn-doubt:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.d-chip {
+  padding: 0.35rem 0.85rem;
+  background: rgba(255,217,61,0.06);
+  border: 1px solid rgba(255,217,61,0.18);
+  border-radius: 50px;
+  font-size: 0.78rem;
+  color: var(--yellow);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.d-chip:hover { background: rgba(255,217,61,0.13); border-color: rgba(255,217,61,0.35); transform: translateY(-1px); }
+
+.doubt-results {
+  max-width: 800px;
+  margin: 2rem auto 0;
+  padding: 0 2rem;
+}
+.doubt-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  animation: slideUp 0.4s ease;
+}
+.doubt-card-head {
+  padding: 0.85rem 1.5rem;
+  background: rgba(255,217,61,0.04);
+  border-bottom: 1px solid rgba(255,217,61,0.08);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--yellow);
+}
+.doubt-card-body {
+  padding: 1.5rem;
+  font-size: 0.9rem;
+  line-height: 1.8;
+}
+.follow-ups { margin-top: 1.25rem; }
+.fu-title { font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.6rem; }
+.fu-item {
+  padding: 0.65rem 1rem;
+  background: rgba(255,217,61,0.03);
+  border: 1px solid rgba(255,217,61,0.08);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.fu-item:hover { background: rgba(255,217,61,0.08); color: var(--text); border-color: rgba(255,217,61,0.2); }
+
+/* ── WHEEL OF FORTUNE PAGE ──────────────────────────────────────────────── */
+.wheel-hero {
+  text-align: center;
+  padding: 2rem 2rem 0;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.wheel-hero h1 { font-size: 2rem; font-weight: 900; margin-bottom: 0.5rem; }
+.wheel-hero p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.6; }
+
+.wheel-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  text-align: center;
+}
+
+.wheel-canvas-wrap {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  margin: 0 auto 1.5rem;
+}
+.wheel-canvas-wrap canvas {
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  box-shadow: 0 0 40px rgba(79,172,254,0.15), 0 0 0 4px rgba(79,172,254,0.12);
+}
+.wheel-pointer {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.8rem;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+  z-index: 2;
+}
+
+.btn-spin {
+  padding: 0.9rem 2.5rem;
+  background: linear-gradient(135deg, var(--blue), var(--cyan));
+  border: none;
+  border-radius: 14px;
+  color: #0a1420;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all var(--transition);
+  margin-bottom: 1.5rem;
+}
+.btn-spin:hover { box-shadow: 0 4px 20px rgba(79,172,254,0.35); transform: translateY(-2px); }
+.btn-spin:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.wheel-prizes {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+.prizes-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+.prize-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+@media (max-width: 480px) { .prize-grid { grid-template-columns: 1fr; } }
+.prize-item {
+  padding: 0.6rem 0.9rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  text-align: left;
+  transition: all var(--transition);
+}
+.prize-item:hover { border-color: rgba(79,172,254,0.25); background: rgba(79,172,254,0.03); }
+
+.wheel-result {
+  max-width: 500px;
+  margin: 1.5rem auto 0;
+  padding: 0 2rem;
+}
+.wheel-result-card {
+  background: var(--bg-card);
+  border: 1px solid rgba(79,172,254,0.25);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  text-align: center;
+  animation: slideUp 0.4s ease;
+}
+.wheel-result-icon { font-size: 3rem; margin-bottom: 0.75rem; }
+.wheel-result-label { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.3rem; }
+.wheel-result-type { font-size: 0.8rem; color: var(--text-secondary); }
+
+/* ── SPRINT PAGE ───────────────────────────────────────────────────────── */
+.sprint-hero {
+  text-align: center;
+  padding: 2rem 2rem 0;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.sprint-hero h1 { font-size: 2rem; font-weight: 900; margin-bottom: 0.5rem; }
+.sprint-hero p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.6; }
+
+.sprint-card {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+.sprint-status {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  text-align: center;
+}
+.sprint-progress-wrap {
+  position: relative;
+  height: 20px;
+  background: var(--bg-elevated);
+  border-radius: 50px;
+  overflow: hidden;
+  margin: 1.25rem 0;
+}
+.sprint-progress-bar {
+  height: 100%;
+  border-radius: 50px;
+  background: linear-gradient(90deg, var(--coral), #ff8e6b);
+  transition: width 0.6s ease;
+}
+.sprint-progress-bar.completed {
+  background: linear-gradient(90deg, var(--green), var(--green-dark));
+}
+.sprint-hours {
+  font-size: 2.2rem;
+  font-weight: 900;
+  margin-bottom: 0.2rem;
+}
+.sprint-target {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+.sprint-badge {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  border-radius: 50px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.sprint-badge.in-progress { background: rgba(255,107,107,0.1); color: var(--coral); border: 1px solid rgba(255,107,107,0.2); }
+.sprint-badge.completed { background: rgba(62,207,142,0.1); color: var(--green); border: 1px solid rgba(62,207,142,0.2); }
+
+.sprint-log-form {
+  max-width: 500px;
+  margin: 1.5rem auto 0;
+  padding: 0 2rem;
+}
+.sprint-log-row {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-end;
+}
+.sprint-log-field { flex: 1; }
+.sprint-log-field label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.4rem;
+}
+#sprint-hours-input {
+  width: 100%;
+  padding: 0.9rem 1.2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  color: var(--text);
+  font-size: 0.92rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+#sprint-hours-input:focus { border-color: var(--coral); box-shadow: 0 0 0 3px rgba(255,107,107,0.15); }
+.btn-log {
+  padding: 0.9rem 1.6rem;
+  background: linear-gradient(135deg, var(--coral), #ff8e6b);
+  border: none;
+  border-radius: 14px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+.btn-log:hover { box-shadow: 0 4px 16px rgba(255,107,107,0.3); transform: translateY(-1px); }
+.btn-log:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+/* ── DISCUSSION PAGE ──────────────────────────────────────────────────── */
+.discuss-hero {
+  text-align: center;
+  padding: 2rem 2rem 0;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.discuss-hero h1 { font-size: 2rem; font-weight: 900; margin-bottom: 0.5rem; }
+.discuss-hero p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.6; }
+
+.discuss-controls {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+.btn-new-room {
+  padding: 0.7rem 1.4rem;
+  background: linear-gradient(135deg, var(--cyan), #00b8d4);
+  border: none;
+  border-radius: 14px;
+  color: #0a1420;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all var(--transition);
+}
+.btn-new-room:hover { box-shadow: 0 4px 16px rgba(0,212,255,0.3); transform: translateY(-1px); }
+.filter-btn {
+  padding: 0.5rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all var(--transition);
+}
+.filter-btn:hover { border-color: var(--border-hover); color: var(--text); }
+.filter-btn.active { border-color: rgba(0,212,255,0.4); color: var(--cyan); background: rgba(0,212,255,0.06); }
+
+.rooms-list {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+.room-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.5rem;
+  margin-bottom: 0.65rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.room-card:hover { border-color: rgba(0,212,255,0.3); transform: translateX(4px); box-shadow: var(--shadow); }
+.room-icon {
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+  background: rgba(0,212,255,0.1);
+  border: 1px solid rgba(0,212,255,0.2);
+}
+.room-info { flex: 1; min-width: 0; }
+.room-title { font-size: 0.92rem; font-weight: 700; margin-bottom: 0.15rem; }
+.room-meta { font-size: 0.75rem; color: var(--text-secondary); display: flex; gap: 0.75rem; }
+.room-badge {
+  padding: 0.2rem 0.55rem;
+  border-radius: 50px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.room-badge-campus { background: rgba(0,212,255,0.08); color: var(--cyan); border: 1px solid rgba(0,212,255,0.2); }
+.room-badge-library { background: rgba(62,207,142,0.08); color: var(--green); border: 1px solid rgba(62,207,142,0.2); }
+
+/* Room detail / chat view */
+.room-detail {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+.room-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.room-back-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  padding: 0.4rem 0.8rem;
+  color: var(--text);
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all var(--transition);
+}
+.room-back-btn:hover { border-color: var(--border-hover); }
+.room-detail-title { font-size: 1.1rem; font-weight: 700; }
+.room-detail-info { font-size: 0.75rem; color: var(--text-secondary); }
+
+.room-messages {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+.room-msg {
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+.room-msg:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.room-msg-author {
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+.room-msg-author.ai-author { color: var(--cyan); }
+.room-msg-text { font-size: 0.88rem; line-height: 1.6; color: var(--text-secondary); }
+.room-msg-time { font-size: 0.68rem; color: var(--muted); margin-top: 0.2rem; }
+
+.room-input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+#room-msg-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  color: var(--text);
+  font-size: 0.88rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+#room-msg-input:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,212,255,0.15); }
+.btn-room-send {
+  padding: 0.75rem 1.2rem;
+  background: linear-gradient(135deg, var(--cyan), #00b8d4);
+  border: none;
+  border-radius: 14px;
+  color: #0a1420;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all var(--transition);
+}
+.btn-room-send:hover { box-shadow: 0 4px 12px rgba(0,212,255,0.3); transform: translateY(-1px); }
+.btn-room-send:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.btn-ai-mod {
+  padding: 0.75rem 1rem;
+  background: rgba(0,212,255,0.08);
+  border: 1px solid rgba(0,212,255,0.2);
+  border-radius: 14px;
+  color: var(--cyan);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all var(--transition);
+}
+.btn-ai-mod:hover { background: rgba(0,212,255,0.15); border-color: rgba(0,212,255,0.35); }
+.btn-ai-mod:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Create room modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(6px);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  width: 90%;
+  max-width: 420px;
+  animation: slideUp 0.3s ease;
+}
+.modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.25rem; }
+.modal-field { margin-bottom: 1rem; }
+.modal-field label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.35rem;
+}
+.modal-field input, .modal-field select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.88rem;
+  font-family: inherit;
+  outline: none;
+}
+.modal-field input:focus, .modal-field select:focus { border-color: var(--cyan); }
+.modal-actions { display: flex; gap: 0.65rem; justify-content: flex-end; margin-top: 1.5rem; }
+.btn-modal-cancel {
+  padding: 0.65rem 1.2rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn-modal-create {
+  padding: 0.65rem 1.2rem;
+  background: linear-gradient(135deg, var(--cyan), #00b8d4);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #0a1420;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* ── TOAST ──────────────────────────────────────────────────────────────── */
+#toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  padding: 0.85rem 1.4rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 9999;
+  transform: translateY(80px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(12px);
+}
+#toast.show { transform: translateY(0); opacity: 1; }
+#toast.success { background: rgba(62,207,142,0.12); border: 1px solid rgba(62,207,142,0.25); color: var(--green); }
+#toast.error   { background: rgba(255,107,107,0.12); border: 1px solid rgba(255,107,107,0.25); color: var(--coral); }
+
+/* ── SPINNER ── */
+.spin { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.15); border-top-color: currentColor; border-radius: 50%; animation: rotate 0.6s linear infinite; vertical-align: middle; }
+@keyframes rotate { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     AUTH SCREEN
+     ══════════════════════════════════════════════════════════════════════════ -->
+<div id="auth-screen">
+  <div class="auth-container">
+    <div class="auth-hero">
+      <div class="auth-hero-content">
+        <div class="auth-logo">🎓</div>
+        <div class="auth-brand">BTU Virtual University</div>
+        <div class="auth-tagline">A 3-tier agentic AI framework with 10 specialist professors, Agentic RAG, and Socratic learning.</div>
+        <div class="auth-features">
+          <div class="auth-feat"><div class="auth-feat-icon fi-purple">🤖</div>Dean → Coach → Professor pipeline</div>
+          <div class="auth-feat"><div class="auth-feat-icon fi-green">📚</div>Agentic RAG across 30 chapters</div>
+          <div class="auth-feat"><div class="auth-feat-icon fi-blue">🧠</div>Extended thinking with Claude Opus</div>
+          <div class="auth-feat"><div class="auth-feat-icon fi-yellow">🎯</div>Socratic doubt-clearing sessions</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="auth-form-panel">
+      <!-- LOGIN -->
+      <div id="login-form">
+        <div class="form-head">
+          <div class="form-title">Welcome back</div>
+          <div class="form-subtitle">Sign in to continue your learning journey</div>
+        </div>
+        <div class="err-box" id="login-error"></div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="login-email" placeholder="your@email.com" autocomplete="email" />
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" />
+        </div>
+        <button class="btn-primary btn-purple-bg" id="login-btn" onclick="doLogin()">Sign In</button>
+        <div class="auth-switch">Don't have an account? <a onclick="toggleAuth('register')">Create one</a></div>
+      </div>
+
+      <!-- REGISTER -->
+      <div id="register-form" style="display:none">
+        <div class="form-head">
+          <div class="form-title">Create account</div>
+          <div class="form-subtitle">Join BTU Virtual University today</div>
+        </div>
+        <div class="err-box" id="register-error"></div>
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" id="reg-name" placeholder="e.g. Vijay Lal" autocomplete="name" />
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="reg-email" placeholder="your@email.com" autocomplete="email" />
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="reg-password" placeholder="Choose a strong password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()" />
+        </div>
+        <button class="btn-primary btn-purple-bg" id="register-btn" onclick="doRegister()">Create Account</button>
+        <div class="auth-switch">Already have an account? <a onclick="toggleAuth('login')">Sign in</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MAIN APP
+     ══════════════════════════════════════════════════════════════════════════ -->
+<div id="app" class="hidden">
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-brand" onclick="showPage('home')">
+      <span class="nav-brand-icon">🎓</span>
+      <span class="nav-brand-text">BTU Virtual University</span>
+    </div>
+    <button class="nav-hamburger" onclick="toggleMobileNav()">☰</button>
+    <div class="nav-links" id="nav-links">
+      <button class="nav-link active" data-page="home" onclick="showPage('home')">
+        <span class="nav-link-icon">🏠</span> Home
+      </button>
+      <button class="nav-link" data-page="chat" onclick="showPage('chat')">
+        <span class="nav-link-icon">💬</span> Chat
+      </button>
+      <button class="nav-link" data-page="library" onclick="showPage('library')">
+        <span class="nav-link-icon">📚</span> Library
+      </button>
+      <button class="nav-link" data-page="doubt" onclick="showPage('doubt')">
+        <span class="nav-link-icon">🤔</span> Doubt Clearing
+      </button>
+      <button class="nav-link" data-page="wheel" onclick="showPage('wheel')">
+        <span class="nav-link-icon">🎰</span> Wheel of Fortune
+      </button>
+      <button class="nav-link" data-page="sprint" onclick="showPage('sprint')">
+        <span class="nav-link-icon">🏃</span> Sprint
+      </button>
+      <button class="nav-link" data-page="discuss" onclick="showPage('discuss')">
+        <span class="nav-link-icon">💬</span> Discussion
+      </button>
+    </div>
+    <div class="nav-right">
+      <div class="nav-user">
+        <div class="nav-avatar" id="nav-avatar">?</div>
+        <span class="nav-username" id="nav-username">Student</span>
+      </div>
+      <button class="btn-signout" onclick="doLogout()">Sign Out</button>
+    </div>
+  </nav>
+
+  <!-- ── HOME PAGE ── -->
+  <div class="page active" id="page-home">
+    <!-- Compact Hero -->
+    <div class="hero" style="padding: 1.5rem 2rem 1rem;">
+      <div class="hero-badge">🚀 Multi-Agentic AI Framework</div>
+      <h1 id="hero-title" style="font-size:2.2rem;">Welcome back!</h1>
+      <p style="margin-bottom:1.25rem;">3-tier AI pipeline with 10 professors, 30 chapters, Agentic RAG, and Socratic learning.</p>
+    </div>
+
+    <!-- Feature Cards – the 3 main actions -->
+    <div class="container">
+      <div class="feature-grid">
+        <div class="feature-card fc-purple" onclick="showPage('chat')">
+          <div class="fc-icon">💬</div>
+          <div class="fc-body">
+            <div class="fc-title">Chat with Dean Morgan</div>
+            <div class="fc-desc">Ask anything about business. Dean routes your query through Coach Elias to the right specialist professor.</div>
+          </div>
+          <div class="fc-arrow">→</div>
+        </div>
+        <div class="feature-card fc-green" onclick="showPage('library')">
+          <div class="fc-icon">📚</div>
+          <div class="fc-body">
+            <div class="fc-title">Search the Library</div>
+            <div class="fc-desc">Agentic RAG runs multi-round retrieval across all 30 chapters for comprehensive answers.</div>
+          </div>
+          <div class="fc-arrow">→</div>
+        </div>
+        <div class="feature-card fc-yellow" onclick="showPage('doubt')">
+          <div class="fc-icon">🤔</div>
+          <div class="fc-body">
+            <div class="fc-title">Clear a Doubt</div>
+            <div class="fc-desc">Skip the pipeline — go directly to a professor for Socratic explanations with follow-ups.</div>
+          </div>
+          <div class="fc-arrow">→</div>
+        </div>
+        <div class="feature-card fc-blue" onclick="showPage('wheel')">
+          <div class="fc-icon">🎰</div>
+          <div class="fc-body">
+            <div class="fc-title">Wheel of Fortune</div>
+            <div class="fc-desc">Complete your weekly sprint target and spin to win bonus hours, XP, badges, and more!</div>
+          </div>
+          <div class="fc-arrow">→</div>
+        </div>
+        <div class="feature-card fc-coral" onclick="showPage('sprint')">
+          <div class="fc-icon">🏃</div>
+          <div class="fc-body">
+            <div class="fc-title">Weekly Sprint</div>
+            <div class="fc-desc">Track your 15-hour weekly study goal. Log hours and unlock the Wheel of Fortune!</div>
+          </div>
+          <div class="fc-arrow">→</div>
+        </div>
+        <div class="feature-card fc-cyan" onclick="showPage('discuss')">
+          <div class="fc-icon">💬</div>
+          <div class="fc-body">
+            <div class="fc-title">Discussion Rooms</div>
+            <div class="fc-desc">Join campus or library discussions. Coach Elias moderates and keeps conversations on track.</div>
+          </div>
+          <div class="fc-arrow">→</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Row — clickable -->
+    <div class="stats-bar" style="margin-top:1.5rem;">
+      <div class="stat-card sc-purple" onclick="showPage('chat')" style="cursor:pointer;" title="Chat uses the 3-tier pipeline"><div class="stat-icon">🤖</div><div class="stat-value">3</div><div class="stat-label">Tiers — Dean → Coach → Prof</div></div>
+      <div class="stat-card sc-green" onclick="document.getElementById('profs-section').scrollIntoView({behavior:'smooth'})" style="cursor:pointer;" title="Scroll to professors"><div class="stat-icon">👩‍🏫</div><div class="stat-value">10</div><div class="stat-label">Specialist Professors</div></div>
+      <div class="stat-card sc-yellow" onclick="showPage('library')" style="cursor:pointer;" title="Search across all 30 chapters"><div class="stat-icon">📖</div><div class="stat-value">30</div><div class="stat-label">Chapters — 10 P's of Business</div></div>
+      <div class="stat-card sc-blue" onclick="showPage('library')" style="cursor:pointer;" title="Try Agentic RAG in the Library"><div class="stat-icon">🧠</div><div class="stat-value">RAG</div><div class="stat-label">Agentic Multi-Round Retrieval</div></div>
+    </div>
+
+    <!-- Professors -->
+    <div class="container" id="profs-section" style="margin-top: 2rem;">
+      <div class="section-heading">Meet the Professors</div>
+      <div class="section-sub">10 specialists covering the 10 P's of Business — each with 3 dedicated chapters.</div>
+      <div class="prof-grid">
+        <div class="prof-card active-prof" style="cursor:pointer;" onclick="openProf('priya_place','What is location strategy in retail?')"><div class="prof-av" style="background:linear-gradient(135deg,#7c5cbf,#9b7de0)">🏬</div><div class="prof-info"><div class="prof-name">Prof. Priya Place</div><div class="prof-sub">Ch. 1–3 — Place</div></div><span class="status-badge badge-live">Live</span></div>
+        <div class="prof-card" style="cursor:pointer;" onclick="comingSoon('Prof. Maya People')"><div class="prof-av" style="background:var(--bg-elevated)">👥</div><div class="prof-info"><div class="prof-name">Prof. Maya People</div><div class="prof-sub">Ch. 4–6 — People</div></div><span class="status-badge badge-soon">Soon</span></div>
+        <div class="prof-card" style="cursor:pointer;" onclick="comingSoon('Prof. Sam Process')"><div class="prof-av" style="background:var(--bg-elevated)">⚙️</div><div class="prof-info"><div class="prof-name">Prof. Sam Process</div><div class="prof-sub">Ch. 7–9 — Process</div></div><span class="status-badge badge-soon">Soon</span></div>
+        <div class="prof-card" style="cursor:pointer;" onclick="comingSoon('Prof. Pablo Positioning')"><div class="prof-av" style="background:var(--bg-elevated)">🎯</div><div class="prof-info"><div class="prof-name">Prof. Pablo Positioning</div><div class="prof-sub">Ch. 10–12 — Positioning</div></div><span class="status-badge badge-soon">Soon</span></div>
+        <div class="prof-card" style="cursor:pointer;" onclick="comingSoon('Prof. Leila Performance')"><div class="prof-av" style="background:var(--bg-elevated)">📈</div><div class="prof-info"><div class="prof-name">Prof. Leila Performance</div><div class="prof-sub">Ch. 13–15 — Performance</div></div><span class="status-badge badge-soon">Soon</span></div>
+        <div class="prof-card" style="cursor:pointer;" onclick="comingSoon('Prof. Dana Platform')"><div class="prof-av" style="background:var(--bg-elevated)">💻</div><div class="prof-info"><div class="prof-name">Prof. Dana Platform</div><div class="prof-sub">Ch. 16–18 — Platform</div></div><span class="status-badge badge-soon">Soon</span></div>
+        <div class="prof-card" style="cursor:pointer;" onclick="comingSoon('Prof. Marcus Pricing')"><div class="prof-av" style="background:var(--bg-elevated)">💰</div><div class="prof-info"><div class="prof-name">Prof. Marcus Pricing</div><div class="prof-sub">Ch. 19–21 — Pricing</div></div><span class="status-badge badge-soon">Soon</span></div>
+        <div class="prof-card" style="cursor:pointer;" onclick="comingSoon('Prof. Iris Purpose')"><div class="prof-av" style="background:var(--bg-elevated)">🌟</div><div class="prof-info"><div class="prof-name">Prof. Iris Purpose</div><div class="prof-sub">Ch. 22–24 — Purpose</div></div><span class="status-badge badge-soon">Soon</span></div>
+        <div class="prof-card" style="cursor:pointer;" onclick="comingSoon('Prof. Lucas Policy')"><div class="prof-av" style="background:var(--bg-elevated)">📋</div><div class="prof-info"><div class="prof-name">Prof. Lucas Policy</div><div class="prof-sub">Ch. 25–27 — Policy</div></div><span class="status-badge badge-soon">Soon</span></div>
+        <div class="prof-card" style="cursor:pointer;" onclick="comingSoon('Prof. Petra Profit')"><div class="prof-av" style="background:var(--bg-elevated)">💹</div><div class="prof-info"><div class="prof-name">Prof. Petra Profit</div><div class="prof-sub">Ch. 28–30 — Profit</div></div><span class="status-badge badge-soon">Soon</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CHAT PAGE ── -->
+  <div class="chat-page" id="page-chat">
+    <div class="chat-header">
+      <div class="pipeline-agents">
+        <div class="pipe-agent" id="pipe-dean">
+          <div class="pipe-av pipe-av-blue">🎓</div>
+          <div class="pipe-label">Dean Morgan</div>
+          <div class="pipe-role">Orchestrator</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-agent" id="pipe-coach">
+          <div class="pipe-av pipe-av-green">🧭</div>
+          <div class="pipe-label">Coach Elias</div>
+          <div class="pipe-role">Bridge</div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-agent" id="pipe-prof">
+          <div class="pipe-av pipe-av-purple">👩‍🏫</div>
+          <div class="pipe-label">Professor</div>
+          <div class="pipe-role">Specialist</div>
+        </div>
+      </div>
+      <div class="chat-header-badge">Powered by Claude Opus</div>
+    </div>
+    <div id="messages">
+      <div class="chat-starters" id="chat-starters">
+        <div class="starters-icon">🎓</div>
+        <div class="starters-heading">How can I help you today?</div>
+        <div class="starters-sub">Your message goes through Dean Morgan, who routes it to the right specialist professor via Coach Elias.</div>
+        <div class="starters-grid">
+          <div class="starter-card" onclick="useStarter(this)"><strong>Place</strong>What is location strategy in retail and why does it matter?</div>
+          <div class="starter-card" onclick="useStarter(this)"><strong>Marketing</strong>Explain the difference between push and pull marketing strategies.</div>
+          <div class="starter-card" onclick="useStarter(this)"><strong>Footfall</strong>How does footfall analysis help businesses choose a store location?</div>
+          <div class="starter-card" onclick="useStarter(this)"><strong>Strategy</strong>What are the 10 P's of business and how do they connect?</div>
+        </div>
+      </div>
+    </div>
+    <div class="chat-input-bar">
+      <div class="chat-input-inner">
+        <textarea id="chat-input" rows="1" placeholder="Ask Dean Morgan anything about business…" onkeydown="chatKeydown(event)"></textarea>
+        <button class="btn-send" id="send-btn" onclick="sendChat()">↑</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LIBRARY PAGE ── -->
+  <div class="page" id="page-library">
+    <div class="library-hero">
+      <h1>📚 Digital Library</h1>
+      <p>Agentic RAG runs multi-round retrieval across all 30 chapters to give you comprehensive, cross-domain answers.</p>
+    </div>
+    <div class="search-box">
+      <div class="search-input-row">
+        <input type="text" id="library-input" placeholder="Search across all 30 chapters…" onkeydown="if(event.key==='Enter')doLibrarySearch()" />
+        <button class="btn-search" id="search-btn" onclick="doLibrarySearch()">Search</button>
+      </div>
+      <div class="chip-row">
+        <span class="s-chip" onclick="libSearch('retail location strategy')">retail location strategy</span>
+        <span class="s-chip" onclick="libSearch('pricing models for SaaS')">pricing models for SaaS</span>
+        <span class="s-chip" onclick="libSearch('brand positioning framework')">brand positioning framework</span>
+        <span class="s-chip" onclick="libSearch('customer lifetime value')">customer lifetime value</span>
+        <span class="s-chip" onclick="libSearch('omnichannel platform strategy')">omnichannel platform</span>
+      </div>
+    </div>
+    <div class="library-results" id="library-results">
+      <div class="empty-state">
+        <div class="empty-state-icon">🔍</div>
+        <div class="empty-state-title">Search the knowledge base</div>
+        <div class="empty-state-sub">Type a query or click a suggestion above. Agentic RAG will search across all chapters.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── WHEEL OF FORTUNE PAGE ── -->
+  <div class="page" id="page-wheel">
+    <div class="wheel-hero">
+      <h1>🎰 Wheel of Fortune</h1>
+      <p>Complete your weekly sprint target (15 hours) to unlock a spin. Win bonus hours, double XP, professor hints, and more!</p>
+    </div>
+    <div class="wheel-container">
+      <div class="wheel-canvas-wrap">
+        <div class="wheel-pointer">▼</div>
+        <canvas id="wheel-canvas" width="640" height="640"></canvas>
+      </div>
+      <button class="btn-spin" id="spin-btn" onclick="doSpin()">Spin the Wheel</button>
+    </div>
+    <div class="wheel-result" id="wheel-result"></div>
+    <div class="wheel-prizes">
+      <div class="prizes-title">Possible Prizes</div>
+      <div class="prize-grid" id="prize-grid"></div>
+    </div>
+  </div>
+
+  <!-- ── SPRINT PAGE ── -->
+  <div class="page" id="page-sprint">
+    <div class="sprint-hero">
+      <h1>🏃 Weekly Sprint</h1>
+      <p>Track your 15-hour weekly study goal. Complete the sprint to unlock the Wheel of Fortune!</p>
+    </div>
+    <div class="sprint-card">
+      <div class="sprint-status" id="sprint-status">
+        <div class="sprint-hours" id="sprint-hours">0 / 15</div>
+        <div class="sprint-target">hours this week</div>
+        <div class="sprint-progress-wrap">
+          <div class="sprint-progress-bar" id="sprint-bar" style="width:0%"></div>
+        </div>
+        <span class="sprint-badge in-progress" id="sprint-badge">In Progress</span>
+      </div>
+    </div>
+    <div class="sprint-log-form">
+      <div class="sprint-log-row">
+        <div class="sprint-log-field">
+          <label>Log Study Hours</label>
+          <input type="number" id="sprint-hours-input" min="0.5" max="24" step="0.5" placeholder="e.g. 2.5" onkeydown="if(event.key==='Enter')logSprintHours()" />
+        </div>
+        <button class="btn-log" id="log-btn" onclick="logSprintHours()">Log Hours</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DISCUSSION PAGE ── -->
+  <div class="page" id="page-discuss">
+    <div class="discuss-hero">
+      <h1>💬 Discussion Rooms</h1>
+      <p>Join campus or library discussions with fellow students. Coach Elias can moderate and summarise conversations.</p>
+    </div>
+    <div class="discuss-controls">
+      <button class="btn-new-room" onclick="showCreateRoomModal()">+ New Room</button>
+      <button class="filter-btn active" id="filter-all" onclick="filterRooms('all')">All</button>
+      <button class="filter-btn" id="filter-campus" onclick="filterRooms('campus')">Campus</button>
+      <button class="filter-btn" id="filter-library" onclick="filterRooms('library')">Library</button>
+    </div>
+    <div class="rooms-list" id="rooms-list">
+      <div class="empty-state">
+        <div class="empty-state-icon">💬</div>
+        <div class="empty-state-title">No rooms yet</div>
+        <div class="empty-state-sub">Create a new discussion room to get started!</div>
+      </div>
+    </div>
+    <div class="room-detail hidden" id="room-detail">
+      <div class="room-detail-header">
+        <button class="room-back-btn" onclick="leaveRoomView()">← Back</button>
+        <div>
+          <div class="room-detail-title" id="room-detail-title"></div>
+          <div class="room-detail-info" id="room-detail-info"></div>
+        </div>
+      </div>
+      <div class="room-messages" id="room-messages"></div>
+      <div class="room-input-row">
+        <input type="text" id="room-msg-input" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendRoomMsg()" />
+        <button class="btn-room-send" id="room-send-btn" onclick="sendRoomMsg()">Send</button>
+        <button class="btn-ai-mod" id="ai-mod-btn" onclick="askAIMod()">🧭 Elias</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Room Modal -->
+  <div class="modal-overlay" id="create-room-modal">
+    <div class="modal-box">
+      <div class="modal-title">Create Discussion Room</div>
+      <div class="modal-field">
+        <label>Room Title</label>
+        <input type="text" id="modal-room-title" placeholder="e.g. Chapter 2 Study Group" />
+      </div>
+      <div class="modal-field">
+        <label>Type</label>
+        <select id="modal-room-type">
+          <option value="campus">Campus</option>
+          <option value="library">Library</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Chapter (optional)</label>
+        <input type="number" id="modal-room-chapter" min="1" max="30" placeholder="1–30" />
+      </div>
+      <div class="modal-field">
+        <label>Topic (optional)</label>
+        <input type="text" id="modal-room-topic" placeholder="e.g. Location strategy debate" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" onclick="hideCreateRoomModal()">Cancel</button>
+        <button class="btn-modal-create" onclick="createRoom()">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DOUBT PAGE ── -->
+  <div class="page" id="page-doubt">
+    <div class="doubt-hero">
+      <h1>🤔 Doubt Clearing</h1>
+      <p>Skip the pipeline — go directly to a specialist professor for a Socratic explanation with follow-up questions.</p>
+    </div>
+    <div class="doubt-box">
+      <div class="doubt-input-row">
+        <div class="doubt-field">
+          <label>Your question or doubt</label>
+          <input type="text" id="doubt-input" placeholder="e.g. How does footfall analysis work?" onkeydown="if(event.key==='Enter')submitDoubt()" />
+        </div>
+        <div class="chapter-field">
+          <label>Chapter</label>
+          <input type="number" id="chapter-hint" min="1" max="30" placeholder="1–30" />
+        </div>
+        <button class="btn-doubt" id="doubt-btn" onclick="submitDoubt()">Ask Professor</button>
+      </div>
+      <div class="chip-row">
+        <span class="d-chip" onclick="prefillDoubt('What is catchment area analysis?',1)">Catchment area analysis</span>
+        <span class="d-chip" onclick="prefillDoubt('How do you measure retail footfall?',2)">Measuring footfall</span>
+        <span class="d-chip" onclick="prefillDoubt('What is gravity model in location theory?',3)">Gravity model</span>
+        <span class="d-chip" onclick="prefillDoubt('Explain competitive proximity in retail.')">Competitive proximity</span>
+      </div>
+    </div>
+    <div class="doubt-results" id="doubt-results">
+      <div class="empty-state">
+        <div class="empty-state-icon">💡</div>
+        <div class="empty-state-title">Ask a professor directly</div>
+        <div class="empty-state-sub">Get a Socratic explanation with follow-up questions and suggested chapters to explore.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+const API = location.origin;
+let token = localStorage.getItem('btu_token') || '';
+let currentUser = null;
+
+// ── INIT ──
+window.onload = async () => {
+  if (token) {
+    try { const me = await api('/auth/me'); setUser(me); showApp(); }
+    catch { token = ''; localStorage.removeItem('btu_token'); }
+  }
+  const ta = document.getElementById('chat-input');
+  ta.addEventListener('input', () => { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 140) + 'px'; });
+};
+
+// ── AUTH ──
+function toggleAuth(mode) {
+  document.getElementById('login-form').style.display    = mode === 'login'    ? 'block' : 'none';
+  document.getElementById('register-form').style.display = mode === 'register' ? 'block' : 'none';
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pw    = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  const btn   = document.getElementById('login-btn');
+  if (!email || !pw) { showErr(errEl, 'Please fill in all fields'); return; }
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Signing in…'; errEl.style.display = 'none';
+  try {
+    const data = await api('/auth/login', 'POST', { email, password: pw });
+    token = data.access_token; localStorage.setItem('btu_token', token);
+    const me = await api('/auth/me'); setUser(me); showApp();
+    toast('Welcome back, ' + me.full_name + '!', 'success');
+  } catch(e) { showErr(errEl, e.message || 'Login failed'); }
+  finally { btn.disabled = false; btn.innerHTML = 'Sign In'; }
+}
+
+async function doRegister() {
+  const name  = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pw    = document.getElementById('reg-password').value;
+  const errEl = document.getElementById('register-error');
+  const btn   = document.getElementById('register-btn');
+  if (!name || !email || !pw) { showErr(errEl, 'Please fill in all fields'); return; }
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Creating…'; errEl.style.display = 'none';
+  try {
+    const data = await api('/auth/register', 'POST', { full_name: name, email, password: pw });
+    token = data.access_token; localStorage.setItem('btu_token', token);
+    const me = await api('/auth/me'); setUser(me); showApp();
+    toast('Welcome to BTU, ' + me.full_name + '!', 'success');
+  } catch(e) { showErr(errEl, e.message || 'Registration failed'); }
+  finally { btn.disabled = false; btn.innerHTML = 'Create Account'; }
+}
+
+function doLogout() {
+  token = ''; localStorage.removeItem('btu_token'); currentUser = null;
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('auth-screen').classList.remove('hidden');
+  // Reset chat
+  const msgs = document.getElementById('messages');
+  msgs.innerHTML = '';
+  msgs.appendChild(buildStarters());
+  toast('Signed out', 'success');
+}
+
+// ── NAVIGATION ──
+function showApp() {
+  document.getElementById('auth-screen').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+}
+
+function showPage(name) {
+  // Hide all pages
+  document.querySelectorAll('.page, .chat-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+
+  // Show target
+  const target = document.getElementById('page-' + name);
+  if (target) target.classList.add('active');
+  const navBtn = document.querySelector(`.nav-link[data-page="${name}"]`);
+  if (navBtn) navBtn.classList.add('active');
+
+  // Focus chat input when switching to chat
+  if (name === 'chat') setTimeout(() => document.getElementById('chat-input')?.focus(), 100);
+  // Load wheel prizes on first visit
+  if (name === 'wheel') loadWheelPrizes();
+  // Load sprint status on visit
+  if (name === 'sprint') loadSprintStatus();
+  // Load rooms on visit
+  if (name === 'discuss') loadRooms();
+
+  // Scroll to top for non-chat pages
+  if (name !== 'chat') window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Close mobile nav
+  document.getElementById('nav-links').classList.remove('mobile-open');
+}
+
+function toggleMobileNav() {
+  document.getElementById('nav-links').classList.toggle('mobile-open');
+}
+
+function setUser(me) {
+  currentUser = me;
+  const first = me.full_name.split(' ')[0];
+  document.getElementById('nav-username').textContent = me.full_name;
+  document.getElementById('nav-avatar').textContent = me.full_name.charAt(0).toUpperCase();
+  document.getElementById('hero-title').textContent = 'Welcome back, ' + first + '!';
+}
+
+// ── CHAT ──
+function buildStarters() {
+  const div = document.createElement('div');
+  div.className = 'chat-starters'; div.id = 'chat-starters';
+  div.innerHTML = `
+    <div class="starters-icon">🎓</div>
+    <div class="starters-heading">How can I help you today?</div>
+    <div class="starters-sub">Your message goes through Dean Morgan, who routes it to the right specialist professor via Coach Elias.</div>
+    <div class="starters-grid">
+      <div class="starter-card" onclick="useStarter(this)"><strong>Place</strong>What is location strategy in retail and why does it matter?</div>
+      <div class="starter-card" onclick="useStarter(this)"><strong>Marketing</strong>Explain the difference between push and pull marketing strategies.</div>
+      <div class="starter-card" onclick="useStarter(this)"><strong>Footfall</strong>How does footfall analysis help businesses choose a store location?</div>
+      <div class="starter-card" onclick="useStarter(this)"><strong>Strategy</strong>What are the 10 P's of business and how do they connect?</div>
+    </div>`;
+  return div;
+}
+
+function useStarter(el) {
+  const text = el.innerText.replace(/^[A-Za-z]+\n/, '').trim();
+  document.getElementById('chat-input').value = text;
+  document.getElementById('chat-starters')?.remove();
+  document.getElementById('chat-input').focus();
+}
+
+function chatKeydown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); } }
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim(); if (!msg) return;
+  const btn = document.getElementById('send-btn');
+  btn.disabled = true; input.value = ''; input.style.height = 'auto';
+  document.getElementById('chat-starters')?.remove();
+  appendMsg({ role: 'user', text: msg });
+  const tid = 'ty-' + Date.now();
+  document.getElementById('messages').insertAdjacentHTML('beforeend',
+    `<div class="typing-row" id="${tid}"><div class="typing-inner"><div class="msg-av av-ai">🎓</div><div class="typing-dots"><div class="td"></div><div class="td"></div><div class="td"></div></div></div></div>`);
+  scrollMsgs();
+  // Animate pipeline stages
+  animatePipeline();
+  try {
+    const r = await api('/chat', 'POST', { message: msg });
+    clearPipeline();
+    document.getElementById(tid)?.remove();
+    appendMsg({ role: 'assistant', text: r.text, agent: r.source_agent, thinking: r.thinking, latency: r.latency_ms, chunks: r.rag_chunks });
+  } catch(e) {
+    clearPipeline();
+    document.getElementById(tid)?.remove();
+    appendMsg({ role: 'assistant', text: '⚠️ ' + (e.message || 'Request failed'), agent: 'error' });
+    toast(e.message || 'Chat failed', 'error');
+  } finally { btn.disabled = false; input.focus(); }
+}
+
+function appendMsg({ role, text, agent, thinking, latency, chunks }) {
+  const isUser = role === 'user';
+  const el = document.getElementById('messages');
+  let tagHtml = '';
+  if (!isUser && agent) {
+    const cls = agent.startsWith('prof') ? 'tag-prof' : agent === 'coach' ? 'tag-coach' : agent === 'dean' ? 'tag-dean' : 'tag-err';
+    tagHtml = `<span class="agent-tag ${cls}">${agent.replace(/_/g,' ').replace('professor','Prof.')}</span>`;
+  }
+  const authorName = isUser ? (currentUser?.full_name || 'You') : (agent ? agent.replace(/_/g,' ').replace('professor','Prof.') : 'Dean Morgan');
+  const latHtml   = latency ? `<span class="msg-latency">${latency}ms</span>` : '';
+  const chunkHtml = chunks && chunks > 0 ? `<span class="rag-tag">📄 ${chunks} chunks</span>` : '';
+  let thinkHtml = '';
+  if (thinking) {
+    const thid = 'th-' + Date.now();
+    thinkHtml = `<div class="thinking-toggle" onclick="toggleThink('${thid}')">🧠 Extended Thinking <span id="${thid}-i">▶</span></div>
+                 <div class="thinking-box" id="${thid}">${esc(thinking)}</div>`;
+  }
+  const av = isUser
+    ? `<div class="msg-av av-user">${currentUser?.full_name?.charAt(0) || 'U'}</div>`
+    : `<div class="msg-av av-ai">🎓</div>`;
+  const tag = isUser ? '<span class="agent-tag tag-you">You</span>' : tagHtml;
+  el.insertAdjacentHTML('beforeend', `
+    <div class="msg-wrap ${isUser ? 'user-msg' : ''}" style="animation: slideUp 0.3s ease">
+      <div class="msg-inner">
+        ${av}
+        <div class="msg-content">
+          <div class="msg-meta">${tag} ${latHtml} ${chunkHtml}</div>
+          <div class="msg-text">${fmt(text)}</div>
+          ${thinkHtml}
+        </div>
+      </div>
+    </div>`);
+  scrollMsgs();
+}
+
+function toggleThink(id) {
+  const el = document.getElementById(id), ic = document.getElementById(id + '-i');
+  ic.textContent = el.classList.toggle('open') ? '▼' : '▶';
+}
+function scrollMsgs() { const el = document.getElementById('messages'); el.scrollTop = el.scrollHeight; }
+
+// ── LIBRARY ──
+function libSearch(q) { document.getElementById('library-input').value = q; doLibrarySearch(); }
+
+async function doLibrarySearch() {
+  const query = document.getElementById('library-input').value.trim();
+  if (!query) return;
+  const btn = document.getElementById('search-btn');
+  const results = document.getElementById('library-results');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Searching…';
+  results.innerHTML = `<div class="empty-state"><div class="empty-state-icon" style="animation:pulse 1.5s infinite">🔍</div><div class="empty-state-title">Searching across 30 chapters…</div><div class="empty-state-sub">Agentic RAG is running multi-round retrieval.</div></div>`;
+  try {
+    const r = await api('/library/search', 'POST', { query });
+    const chs = (r.chapters_hit || []).map(c => `<span class="ch-chip">Ch. ${c}</span>`).join('');
+    results.innerHTML = `<div class="result-card">
+      <div class="result-header">
+        <span class="result-label">📚 Library Answer</span>
+        <div class="result-meta">${r.rag_rounds ? `Rounds: ${r.rag_rounds}` : ''}${r.latency_ms ? ` · ${r.latency_ms}ms` : ''}</div>
+      </div>
+      <div class="result-body">${fmt(r.answer)}</div>
+      ${chs ? `<div class="ch-chips">${chs}</div>` : ''}
+    </div>`;
+  } catch(e) {
+    results.innerHTML = `<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Search failed</div><div class="empty-state-sub">${esc(e.message)}</div></div>`;
+    toast(e.message || 'Search failed', 'error');
+  } finally { btn.disabled = false; btn.innerHTML = 'Search'; }
+}
+
+// ── DOUBT ──
+function prefillDoubt(q, ch) {
+  document.getElementById('doubt-input').value = q;
+  if (ch) document.getElementById('chapter-hint').value = ch;
+  document.getElementById('doubt-input').focus();
+}
+
+async function submitDoubt() {
+  const q  = document.getElementById('doubt-input').value.trim();
+  const ch = document.getElementById('chapter-hint').value;
+  if (!q) { document.getElementById('doubt-input').focus(); return; }
+  const btn = document.getElementById('doubt-btn');
+  const results = document.getElementById('doubt-results');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Asking…';
+  results.innerHTML = `<div class="empty-state"><div class="empty-state-icon" style="animation:pulse 1.5s infinite">🤔</div><div class="empty-state-title">Consulting the professor…</div><div class="empty-state-sub">Preparing a Socratic explanation.</div></div>`;
+  const payload = { doubt_question: q };
+  if (ch) payload.chapter_hint = parseInt(ch);
+  try {
+    const r = await api('/doubt', 'POST', payload);
+    const fuHtml  = (r.follow_up_questions || []).map(fq => `<div class="fu-item" onclick="prefillDoubt('${esc(fq)}')">💭 ${esc(fq)}</div>`).join('');
+    const sugHtml = (r.suggested_chapters || []).map(c => `<span class="ch-chip">Ch. ${c}</span>`).join('');
+    results.innerHTML = `<div class="doubt-card">
+      <div class="doubt-card-head">🎓 ${esc(r.professor_id || 'Professor')}${r.latency_ms ? `<span style="margin-left:auto;font-weight:400;font-size:.72rem;color:var(--text-secondary)">${r.latency_ms}ms</span>` : ''}</div>
+      <div class="doubt-card-body">
+        ${fmt(r.explanation)}
+        ${sugHtml ? `<div class="ch-chips" style="margin-top:1.25rem">${sugHtml}</div>` : ''}
+        ${fuHtml ? `<div class="follow-ups"><div class="fu-title">Follow-up questions to explore</div>${fuHtml}</div>` : ''}
+      </div>
+    </div>`;
+  } catch(e) {
+    results.innerHTML = `<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Request failed</div><div class="empty-state-sub">${esc(e.message)}</div></div>`;
+    toast(e.message || 'Request failed', 'error');
+  } finally { btn.disabled = false; btn.innerHTML = 'Ask Professor'; }
+}
+
+// ── HELPERS ──
+async function api(path, method = 'GET', body = null) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(API + path, opts);
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const msg = data.detail || data.message || `HTTP ${res.status}`;
+    throw new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
+  }
+  return data;
+}
+function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function fmt(t) {
+  return esc(t)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/`(.+?)`/g, '<code>$1</code>')
+    .replace(/\n/g, '<br>');
+}
+// ── PIPELINE ANIMATION ──
+let _pipeTimers = [];
+function animatePipeline() {
+  const dean = document.getElementById('pipe-dean');
+  const coach = document.getElementById('pipe-coach');
+  const prof = document.getElementById('pipe-prof');
+  clearPipeline();
+  // Stage 1: Dean (immediate)
+  dean.classList.add('active-pipe', 'pipe-dean-active');
+  // Stage 2: Coach (after 1.5s)
+  _pipeTimers.push(setTimeout(() => {
+    dean.classList.remove('active-pipe', 'pipe-dean-active');
+    coach.classList.add('active-pipe', 'pipe-coach-active');
+    // Stage 3: Professor (after 3s)
+    _pipeTimers.push(setTimeout(() => {
+      coach.classList.remove('active-pipe', 'pipe-coach-active');
+      prof.classList.add('active-pipe', 'pipe-prof-active');
+    }, 1500));
+  }, 1500));
+}
+function clearPipeline() {
+  _pipeTimers.forEach(t => clearTimeout(t));
+  _pipeTimers = [];
+  ['pipe-dean','pipe-coach','pipe-prof'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('active-pipe','pipe-dean-active','pipe-coach-active','pipe-prof-active');
+  });
+}
+
+// ── PROFESSOR CARDS ──
+function openProf(profId, question) {
+  showPage('chat');
+  document.getElementById('chat-starters')?.remove();
+  document.getElementById('chat-input').value = question;
+  document.getElementById('chat-input').focus();
+}
+function comingSoon(name) {
+  toast(name + ' is coming soon!', 'error');
+}
+
+// ── WHEEL OF FORTUNE ──
+const WHEEL_COLORS = ['#7c5cbf','#3ecf8e','#4facfe','#ff6b6b','#ffd93d','#00d4ff','#a07ee8','#2eaf74'];
+let wheelPrizes = [];
+let wheelAngle = 0;
+let wheelSpinning = false;
+
+async function loadWheelPrizes() {
+  if (wheelPrizes.length) return;
+  try {
+    wheelPrizes = await api('/wheel/prizes');
+    renderPrizeGrid();
+    drawWheel();
+  } catch(e) { console.warn('Failed to load prizes', e); }
+}
+
+function renderPrizeGrid() {
+  const grid = document.getElementById('prize-grid');
+  grid.innerHTML = wheelPrizes.map(p => `<div class="prize-item">${esc(p.prize_label)}</div>`).join('');
+}
+
+function drawWheel(highlightIdx) {
+  const canvas = document.getElementById('wheel-canvas');
+  if (!canvas || !wheelPrizes.length) return;
+  const ctx = canvas.getContext('2d');
+  const cx = 320, cy = 320, r = 300;
+  const n = wheelPrizes.length;
+  const arc = (2 * Math.PI) / n;
+
+  ctx.clearRect(0, 0, 640, 640);
+
+  for (let i = 0; i < n; i++) {
+    const startAngle = wheelAngle + i * arc;
+    const endAngle = startAngle + arc;
+
+    // Slice
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, startAngle, endAngle);
+    ctx.closePath();
+    ctx.fillStyle = highlightIdx === i ? '#fff' : WHEEL_COLORS[i % WHEEL_COLORS.length];
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Text
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(startAngle + arc / 2);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = highlightIdx === i ? '#000' : '#fff';
+    ctx.font = 'bold 18px Inter, sans-serif';
+    const label = wheelPrizes[i].prize_label.replace(/^[^\s]+\s/, '');
+    ctx.fillText(label.length > 14 ? label.slice(0, 13) + '…' : label, r - 20, 6);
+    ctx.restore();
+  }
+
+  // Center circle
+  ctx.beginPath();
+  ctx.arc(cx, cy, 40, 0, 2 * Math.PI);
+  ctx.fillStyle = '#0a0a1a';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(79,172,254,0.4)';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.fillStyle = '#4facfe';
+  ctx.font = 'bold 22px Inter, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('BTU', cx, cy);
+}
+
+async function doSpin() {
+  if (wheelSpinning || !currentUser) return;
+  const btn = document.getElementById('spin-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Spinning…';
+  wheelSpinning = true;
+  document.getElementById('wheel-result').innerHTML = '';
+
+  try {
+    const r = await api(`/wheel/${currentUser.student_id}/spin`, 'POST');
+    const prize = r.prize;
+    // Find prize index
+    const idx = wheelPrizes.findIndex(p => p.prize_label === prize.prize_label);
+    await animateWheel(idx >= 0 ? idx : 0);
+    // Show result
+    document.getElementById('wheel-result').innerHTML = `
+      <div class="wheel-result-card">
+        <div class="wheel-result-icon">🎉</div>
+        <div class="wheel-result-label">${esc(prize.prize_label)}</div>
+        <div class="wheel-result-type">Prize type: ${esc(prize.prize_type)}</div>
+      </div>`;
+    toast('You won: ' + prize.prize_label, 'success');
+  } catch(e) {
+    toast(e.message || 'Spin failed', 'error');
+  } finally {
+    wheelSpinning = false;
+    btn.disabled = false;
+    btn.innerHTML = 'Spin the Wheel';
+  }
+}
+
+function animateWheel(targetIdx) {
+  return new Promise(resolve => {
+    const n = wheelPrizes.length;
+    const arc = (2 * Math.PI) / n;
+    // Target angle: pointer at top (-PI/2), land on middle of targetIdx slice
+    const targetAngle = -Math.PI / 2 - targetIdx * arc - arc / 2;
+    // Add extra full rotations for dramatic effect
+    const totalSpin = targetAngle - wheelAngle - Math.PI * 8;
+    const duration = 4000;
+    const start = performance.now();
+    const startAngle = wheelAngle;
+
+    function frame(now) {
+      const elapsed = now - start;
+      const t = Math.min(elapsed / duration, 1);
+      // Ease out cubic
+      const ease = 1 - Math.pow(1 - t, 3);
+      wheelAngle = startAngle + totalSpin * ease;
+      drawWheel(t === 1 ? targetIdx : undefined);
+      if (t < 1) requestAnimationFrame(frame);
+      else resolve();
+    }
+    requestAnimationFrame(frame);
+  });
+}
+
+// ── SPRINT ──
+async function loadSprintStatus() {
+  if (!currentUser) return;
+  try {
+    const s = await api(`/sprint/${currentUser.student_id}`);
+    const logged = s.hours_logged || 0;
+    const target = s.target || 15;
+    const pct = Math.min(Math.round((logged / target) * 100), 100);
+    const done = s.status === 'completed' || pct >= 100;
+    document.getElementById('sprint-hours').textContent = `${logged} / ${target}`;
+    document.getElementById('sprint-bar').style.width = pct + '%';
+    const bar = document.getElementById('sprint-bar');
+    const badge = document.getElementById('sprint-badge');
+    if (done) {
+      bar.classList.add('completed');
+      badge.className = 'sprint-badge completed';
+      badge.textContent = 'Completed — Wheel Unlocked!';
+    } else {
+      bar.classList.remove('completed');
+      badge.className = 'sprint-badge in-progress';
+      badge.textContent = `${pct}% — ${(target - logged).toFixed(1)}h remaining`;
+    }
+  } catch(e) { console.warn('Sprint load failed', e); }
+}
+
+async function logSprintHours() {
+  if (!currentUser) return;
+  const input = document.getElementById('sprint-hours-input');
+  const hours = parseFloat(input.value);
+  if (!hours || hours <= 0 || hours > 24) { toast('Enter hours between 0.5 and 24', 'error'); return; }
+  const btn = document.getElementById('log-btn');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Logging…';
+  try {
+    const r = await api(`/sprint/${currentUser.student_id}/log`, 'POST', { hours });
+    input.value = '';
+    toast(`Logged ${hours} hours!`, 'success');
+    if (r.wheel_unlocked) toast('Wheel of Fortune unlocked!', 'success');
+    await loadSprintStatus();
+  } catch(e) { toast(e.message || 'Log failed', 'error'); }
+  finally { btn.disabled = false; btn.innerHTML = 'Log Hours'; }
+}
+
+// ── DISCUSSION ──
+let currentRoomId = null;
+let roomFilter = 'all';
+let roomPollTimer = null;
+
+async function loadRooms() {
+  const list = document.getElementById('rooms-list');
+  try {
+    const url = roomFilter === 'all' ? '/discuss/rooms' : `/discuss/rooms?room_type=${roomFilter}`;
+    const rooms = await api(url);
+    if (!rooms.length) {
+      list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">💬</div><div class="empty-state-title">No rooms yet</div><div class="empty-state-sub">Create a new discussion room to get started!</div></div>`;
+      return;
+    }
+    list.innerHTML = rooms.map(r => `
+      <div class="room-card" onclick="enterRoom('${r.room_id}','${esc(r.title)}','${r.room_type}',${r.member_count})">
+        <div class="room-icon">${r.room_type === 'campus' ? '🏫' : '📚'}</div>
+        <div class="room-info">
+          <div class="room-title">${esc(r.title)}</div>
+          <div class="room-meta">
+            <span>${r.member_count} member${r.member_count !== 1 ? 's' : ''}</span>
+            ${r.chapter_hint ? `<span>Ch. ${r.chapter_hint}</span>` : ''}
+            ${r.topic ? `<span>${esc(r.topic)}</span>` : ''}
+          </div>
+        </div>
+        <span class="room-badge room-badge-${r.room_type}">${r.room_type}</span>
+      </div>
+    `).join('');
+  } catch(e) { list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Failed to load rooms</div><div class="empty-state-sub">${esc(e.message)}</div></div>`; }
+}
+
+function filterRooms(type) {
+  roomFilter = type;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('filter-' + type).classList.add('active');
+  loadRooms();
+}
+
+async function enterRoom(roomId, title, type, members) {
+  currentRoomId = roomId;
+  // Auto-join
+  try { await api(`/discuss/${roomId}/join`, 'POST'); } catch(e) {}
+  document.getElementById('rooms-list').classList.add('hidden');
+  document.querySelector('.discuss-controls').classList.add('hidden');
+  const detail = document.getElementById('room-detail');
+  detail.classList.remove('hidden');
+  document.getElementById('room-detail-title').textContent = title;
+  document.getElementById('room-detail-info').textContent = `${type} · ${members} members`;
+  await loadRoomMessages();
+  // Poll for new messages every 5s
+  roomPollTimer = setInterval(loadRoomMessages, 5000);
+}
+
+function leaveRoomView() {
+  currentRoomId = null;
+  if (roomPollTimer) { clearInterval(roomPollTimer); roomPollTimer = null; }
+  document.getElementById('room-detail').classList.add('hidden');
+  document.getElementById('rooms-list').classList.remove('hidden');
+  document.querySelector('.discuss-controls').classList.remove('hidden');
+  loadRooms();
+}
+
+async function loadRoomMessages() {
+  if (!currentRoomId) return;
+  const el = document.getElementById('room-messages');
+  try {
+    const msgs = await api(`/discuss/${currentRoomId}/msgs`);
+    if (!msgs.length) {
+      el.innerHTML = '<div style="text-align:center;color:var(--muted);padding:2rem;font-size:0.85rem">No messages yet. Start the conversation!</div>';
+      return;
+    }
+    el.innerHTML = msgs.map(m => `
+      <div class="room-msg">
+        <div class="room-msg-author ${m.is_ai ? 'ai-author' : ''}">${m.is_ai ? '🧭 Coach Elias' : esc(m.author)}</div>
+        <div class="room-msg-text">${fmt(m.content)}</div>
+        <div class="room-msg-time">${new Date(m.created_at).toLocaleTimeString()}</div>
+      </div>
+    `).join('');
+    el.scrollTop = el.scrollHeight;
+  } catch(e) { console.warn('Failed to load messages', e); }
+}
+
+async function sendRoomMsg() {
+  if (!currentRoomId) return;
+  const input = document.getElementById('room-msg-input');
+  const content = input.value.trim();
+  if (!content) return;
+  const btn = document.getElementById('room-send-btn');
+  btn.disabled = true; input.value = '';
+  try {
+    await api(`/discuss/${currentRoomId}/msg`, 'POST', { content });
+    await loadRoomMessages();
+  } catch(e) { toast(e.message || 'Send failed', 'error'); }
+  finally { btn.disabled = false; input.focus(); }
+}
+
+async function askAIMod() {
+  if (!currentRoomId) return;
+  const btn = document.getElementById('ai-mod-btn');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Elias…';
+  try {
+    await api(`/discuss/${currentRoomId}/ai`, 'POST', {});
+    await loadRoomMessages();
+    toast('Coach Elias responded!', 'success');
+  } catch(e) { toast(e.message || 'AI moderation failed', 'error'); }
+  finally { btn.disabled = false; btn.innerHTML = '🧭 Elias'; }
+}
+
+function showCreateRoomModal() { document.getElementById('create-room-modal').classList.add('show'); }
+function hideCreateRoomModal() { document.getElementById('create-room-modal').classList.remove('show'); }
+
+async function createRoom() {
+  const title = document.getElementById('modal-room-title').value.trim();
+  const roomType = document.getElementById('modal-room-type').value;
+  const chapter = document.getElementById('modal-room-chapter').value;
+  const topic = document.getElementById('modal-room-topic').value.trim();
+  if (!title || title.length < 3) { toast('Room title must be at least 3 characters', 'error'); return; }
+  const payload = { title, room_type: roomType };
+  if (chapter) payload.chapter_hint = parseInt(chapter);
+  if (topic) payload.topic = topic;
+  try {
+    await api('/discuss/create', 'POST', payload);
+    hideCreateRoomModal();
+    document.getElementById('modal-room-title').value = '';
+    document.getElementById('modal-room-chapter').value = '';
+    document.getElementById('modal-room-topic').value = '';
+    toast('Room created!', 'success');
+    await loadRooms();
+  } catch(e) { toast(e.message || 'Create failed', 'error'); }
+}
+
+function showErr(el, msg) { el.textContent = msg; el.style.display = 'block'; }
+function toast(msg, type = 'success') {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'show ' + type;
+  clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 3500);
+}
+</script>
+</body>
+</html>

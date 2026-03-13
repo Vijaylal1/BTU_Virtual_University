@@ -1,0 +1,33 @@
+"""
+Prof. Leila Performance – Leadership & Performance Culture (Chapters 13-15).
+STATUS: DORMANT – stub only. Activate in a future sprint.
+"""
+
+from __future__ import annotations
+
+from agents.handoff import HandoffPacket2
+from agents.professors.base_professor import BaseProfessor, ProfessorResponse
+from memory.store import MemoryStore
+from rag.pipeline import RAGPipeline
+
+
+class ProfPerformance(BaseProfessor):
+    agent_id       = "performance"
+    professor_name = "Prof. Leila Performance"
+    domain         = "Leadership & Performance Culture"
+    chapters       = [13, 14, 15]
+
+    def __init__(self, memory: MemoryStore, rag: RAGPipeline) -> None:
+        super().__init__(memory, rag)
+
+    async def respond(self, packet: HandoffPacket2) -> ProfessorResponse:
+        return ProfessorResponse(
+            response_text=(
+                "Prof. Leila Performance's domain (Leadership & Performance Culture, chapters 13-15) "
+                "will be available in the next sprint. "
+                "Please ask Prof. Priya Place (chapters 1-3) or Elias Vance for guidance."
+            ),
+            thinking=None,
+            latency_ms=0,
+            rag_chunks_used=0,
+        )

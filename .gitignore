@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+dist/
+*.egg-info/
+
+# Environment
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Test artifacts
+.coverage
+htmlcov/
+.pytest_cache/
+
+# FAISS local persistence
+.faiss_store/
+
+# ChromaDB (legacy)
+.chromadb/
+
+# Data (large)
+data/chapters/*.md
+data/chapters/*.txt
+
+# Vercel
+.vercel/

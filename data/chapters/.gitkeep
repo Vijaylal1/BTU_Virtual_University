@@ -1,0 +1,3 @@
+# Place your chapter markdown files here.
+# Naming convention: chapter_01.md, chapter_02.md ... chapter_30.md
+# Run `make ingest` to load them into the FAISS vector store.
