@@ -1,3 +1,7 @@
+[project]
+name = "btu-virtual-university"
+version = "0.1.0"
+requires-python = ">=3.11"
 [tool.poetry]
 name = "btu-virtual-university"
 version = "0.1.0"
