@@ -39,9 +39,18 @@ settings = get_settings()
 class MemoryStore:
     def __init__(self) -> None:
         import re
+
         db_url = re.sub(r"[?&]sslmode=\w+", "", settings.DATABASE_URL)
         connect_args = {"ssl": True} if "neon.tech" in settings.DATABASE_URL else {}
-        self._engine = create_async_engine(db_url, echo=False, pool_pre_ping=True, connect_args=connect_args)
+        self._engine = create_async_engine(
+            db_url,
+            echo=False,
+            pool_pre_ping=True,
+            connect_args=connect_args,
+            pool_size=5,
+            max_overflow=10,
+            pool_recycle=300,
+        )
         self._session_factory = async_sessionmaker(self._engine, expire_on_commit=False)
 
     async def init_db(self) -> None:
@@ -63,7 +72,9 @@ class MemoryStore:
             result = await s.execute(select(Student).where(Student.email == email))
             return result.scalar_one_or_none()
 
-    async def create_student(self, email: str, full_name: str, hashed_pw: str) -> Student:
+    async def create_student(
+        self, email: str, full_name: str, hashed_pw: str
+    ) -> Student:
         async with self._session() as s:
             student = Student(email=email, full_name=full_name, hashed_pw=hashed_pw)
             s.add(student)
@@ -78,7 +89,6 @@ class MemoryStore:
             if not student:
                 raise ValueError(f"Student {student_id} not found")
 
-            # Chapter progress
             result = await s.execute(
                 select(ChapterProgress)
                 .where(ChapterProgress.student_id == uuid.UUID(student_id))
@@ -86,13 +96,18 @@ class MemoryStore:
             )
             chapters = result.scalars().all()
             completed = sum(1 for c in chapters if c.status == "completed")
-            current_ch = max((c.chapter_number for c in chapters if c.status == "in_progress"), default=1)
+            current_ch = max(
+                (c.chapter_number for c in chapters if c.status == "in_progress"),
+                default=1,
+            )
             completion_pct = completed / 30.0
 
-            # Sprint
             sprint_result = await s.execute(
                 select(Sprint)
-                .where(Sprint.student_id == uuid.UUID(student_id), Sprint.status == "active")
+                .where(
+                    Sprint.student_id == uuid.UUID(student_id),
+                    Sprint.status == "active",
+                )
                 .order_by(Sprint.week_number.desc())
                 .limit(1)
             )
@@ -100,7 +115,6 @@ class MemoryStore:
             sprint_week = sprint.week_number if sprint else 1
             sprint_hours = sprint.hours_logged if sprint else 0.0
 
-            # Recent summaries
             summ_result = await s.execute(
                 select(CrossAgentSummary.summary_text)
                 .where(CrossAgentSummary.student_id == uuid.UUID(student_id))
@@ -109,9 +123,10 @@ class MemoryStore:
             )
             recent_summaries = [row[0] for row in summ_result.all()]
 
-            # Badge count (wheel spins as proxy)
             badge_count_result = await s.execute(
-                select(func.count()).where(WheelSpin.student_id == uuid.UUID(student_id))
+                select(func.count()).where(
+                    WheelSpin.student_id == uuid.UUID(student_id)
+                )
             )
             badge_count = badge_count_result.scalar() or 0
 
@@ -133,6 +148,7 @@ class MemoryStore:
         """Return the most recent active session for the student, creating one if needed."""
         async with self._session() as s:
             from memory.models import Session as SessionModel
+
             result = await s.execute(
                 select(SessionModel)
                 .where(SessionModel.student_id == uuid.UUID(student_id))
@@ -158,19 +174,29 @@ class MemoryStore:
         latency_ms: Optional[int] = None,
         session_id: Optional[str] = None,
     ) -> None:
-        sid = uuid.UUID(session_id) if session_id else await self.get_or_create_session(student_id)
-        async with self._session() as s:
-            msg = Message(
-                session_id=sid,
-                student_id=uuid.UUID(student_id),
-                role=role,
-                content=content,
-                source_agent=source_agent,
-                thinking=thinking,
-                latency_ms=latency_ms,
+        try:
+            sid = (
+                uuid.UUID(session_id)
+                if session_id
+                else await self.get_or_create_session(student_id)
             )
-            s.add(msg)
-            await s.commit()
+            async with self._session() as s:
+                msg = Message(
+                    session_id=sid,
+                    student_id=uuid.UUID(student_id),
+                    role=role,
+                    content=content,
+                    source_agent=source_agent,
+                    thinking=thinking,
+                    latency_ms=latency_ms,
+                )
+                s.add(msg)
+                await s.commit()
+        except Exception as exc:
+            logger.error(
+                "save_message_failed", student_id=student_id, role=role, error=str(exc)
+            )
+            raise
 
     async def get_recent_messages(self, student_id: str, limit: int = 10) -> list[dict]:
         async with self._session() as s:
@@ -186,7 +212,9 @@ class MemoryStore:
                 for m in reversed(msgs)
             ]
 
-    async def message_count_since_last_summary(self, student_id: str, professor_id: str) -> int:
+    async def message_count_since_last_summary(
+        self, student_id: str, professor_id: str
+    ) -> int:
         """Count messages since the last cross-agent summary for this professor."""
         async with self._session() as s:
             last_summary = await s.execute(
@@ -212,7 +240,9 @@ class MemoryStore:
 
     # ── Summaries ─────────────────────────────────────────────────────────────
 
-    async def save_summary(self, student_id: str, professor_id: str, summary_text: str) -> None:
+    async def save_summary(
+        self, student_id: str, professor_id: str, summary_text: str
+    ) -> None:
         async with self._session() as s:
             summary = CrossAgentSummary(
                 student_id=uuid.UUID(student_id),
@@ -224,13 +254,17 @@ class MemoryStore:
 
     # ── Ceremonies ────────────────────────────────────────────────────────────
 
-    async def record_ceremony(self, student_id: str, milestone: MilestoneType, script: str) -> None:
+    async def record_ceremony(
+        self, student_id: str, milestone: MilestoneType, script: str
+    ) -> None:
         async with self._session() as s:
-            s.add(Ceremony(
-                student_id=uuid.UUID(student_id),
-                milestone=milestone.value,
-                script=script,
-            ))
+            s.add(
+                Ceremony(
+                    student_id=uuid.UUID(student_id),
+                    milestone=milestone.value,
+                    script=script,
+                )
+            )
             await s.commit()
 
     async def is_onboarded(self, student_id: str) -> bool:
@@ -258,11 +292,11 @@ class MemoryStore:
                 await s.commit()
 
     async def total_message_count(self, student_id: str) -> int:
-        """Count all messages for a student (both user and assistant)."""
         async with self._session() as s:
             result = await s.execute(
-                select(func.count(Message.message_id))
-                .where(Message.student_id == uuid.UUID(student_id))
+                select(func.count(Message.message_id)).where(
+                    Message.student_id == uuid.UUID(student_id)
+                )
             )
             return result.scalar_one()
 
@@ -272,7 +306,10 @@ class MemoryStore:
         async with self._session() as s:
             result = await s.execute(
                 select(Sprint)
-                .where(Sprint.student_id == uuid.UUID(student_id), Sprint.status == "active")
+                .where(
+                    Sprint.student_id == uuid.UUID(student_id),
+                    Sprint.status == "active",
+                )
                 .order_by(Sprint.week_number.desc())
                 .limit(1)
             )
@@ -282,15 +319,19 @@ class MemoryStore:
         async with self._session() as s:
             sprint = await s.execute(
                 select(Sprint)
-                .where(Sprint.student_id == uuid.UUID(student_id), Sprint.status == "active")
+                .where(
+                    Sprint.student_id == uuid.UUID(student_id),
+                    Sprint.status == "active",
+                )
                 .order_by(Sprint.week_number.desc())
                 .limit(1)
             )
             sprint = sprint.scalar_one_or_none()
             if not sprint:
-                # Create a new sprint
                 result = await s.execute(
-                    select(func.max(Sprint.week_number)).where(Sprint.student_id == uuid.UUID(student_id))
+                    select(func.max(Sprint.week_number)).where(
+                        Sprint.student_id == uuid.UUID(student_id)
+                    )
                 )
                 max_week = result.scalar() or 0
                 sprint = Sprint(
@@ -310,14 +351,31 @@ class MemoryStore:
 
     # ── Wheel spins ───────────────────────────────────────────────────────────
 
-    async def save_wheel_spin(self, student_id: str, prize: str, prize_type: str) -> None:
-        async with self._session() as s:
-            s.add(WheelSpin(student_id=uuid.UUID(student_id), prize=prize, prize_type=prize_type))
-            await s.commit()
+    async def save_wheel_spin(
+        self, student_id: str, prize: str, prize_type: str
+    ) -> None:
+        try:
+            async with self._session() as s:
+                s.add(
+                    WheelSpin(
+                        student_id=uuid.UUID(student_id),
+                        prize=prize,
+                        prize_type=prize_type,
+                    )
+                )
+                await s.commit()
+            logger.info("wheel_spin_saved", student_id=student_id, prize=prize)
+        except Exception as exc:
+            logger.error(
+                "wheel_spin_save_failed", student_id=student_id, error=str(exc)
+            )
+            raise
 
     # ── Chapter progress ──────────────────────────────────────────────────────
 
-    async def update_chapter_status(self, student_id: str, chapter: int, status: str) -> None:
+    async def update_chapter_status(
+        self, student_id: str, chapter: int, status: str
+    ) -> None:
         async with self._session() as s:
             result = await s.execute(
                 select(ChapterProgress).where(
@@ -334,13 +392,15 @@ class MemoryStore:
                 if status == "completed":
                     progress.completed_at = now
             else:
-                s.add(ChapterProgress(
-                    student_id=uuid.UUID(student_id),
-                    chapter_number=chapter,
-                    status=status,
-                    started_at=now if status == "in_progress" else None,
-                    completed_at=now if status == "completed" else None,
-                ))
+                s.add(
+                    ChapterProgress(
+                        student_id=uuid.UUID(student_id),
+                        chapter_number=chapter,
+                        status=status,
+                        started_at=now if status == "in_progress" else None,
+                        completed_at=now if status == "completed" else None,
+                    )
+                )
             await s.commit()
 
     # ── Discussion rooms ─────────────────────────────────────────────────────
@@ -364,9 +424,10 @@ class MemoryStore:
                 created_by=uuid.UUID(created_by),
             )
             s.add(room)
-            # Auto-join the creator
             await s.flush()
-            s.add(DiscussionMember(room_id=room.room_id, student_id=uuid.UUID(created_by)))
+            s.add(
+                DiscussionMember(room_id=room.room_id, student_id=uuid.UUID(created_by))
+            )
             await s.commit()
             await s.refresh(room)
             return room
@@ -399,7 +460,11 @@ class MemoryStore:
             )
             if existing.scalar_one_or_none():
                 return False
-            s.add(DiscussionMember(room_id=uuid.UUID(room_id), student_id=uuid.UUID(student_id)))
+            s.add(
+                DiscussionMember(
+                    room_id=uuid.UUID(room_id), student_id=uuid.UUID(student_id)
+                )
+            )
             await s.commit()
             return True
 
@@ -412,12 +477,20 @@ class MemoryStore:
                 .order_by(DiscussionMember.joined_at)
             )
             return [
-                {"student_id": str(m.student_id), "full_name": st.full_name, "joined_at": str(m.joined_at)}
+                {
+                    "student_id": str(m.student_id),
+                    "full_name": st.full_name,
+                    "joined_at": str(m.joined_at),
+                }
                 for m, st in result.all()
             ]
 
     async def post_discussion_message(
-        self, room_id: str, content: str, student_id: Optional[str] = None, is_ai: bool = False
+        self,
+        room_id: str,
+        content: str,
+        student_id: Optional[str] = None,
+        is_ai: bool = False,
     ) -> DiscussionMessage:
         async with self._session() as s:
             msg = DiscussionMessage(
@@ -431,7 +504,9 @@ class MemoryStore:
             await s.refresh(msg)
             return msg
 
-    async def get_discussion_messages(self, room_id: str, limit: int = 50) -> list[dict]:
+    async def get_discussion_messages(
+        self, room_id: str, limit: int = 50
+    ) -> list[dict]:
         async with self._session() as s:
             result = await s.execute(
                 select(DiscussionMessage, Student)
@@ -529,14 +604,16 @@ class MemoryStore:
         latency_ms: Optional[int] = None,
     ) -> None:
         async with self._session() as s:
-            s.add(LibrarySession(
-                student_id=uuid.UUID(student_id),
-                query=query,
-                answer=answer,
-                chapters_hit=chapters_hit,
-                rag_rounds=rag_rounds,
-                latency_ms=latency_ms,
-            ))
+            s.add(
+                LibrarySession(
+                    student_id=uuid.UUID(student_id),
+                    query=query,
+                    answer=answer,
+                    chapters_hit=chapters_hit,
+                    rag_rounds=rag_rounds,
+                    latency_ms=latency_ms,
+                )
+            )
             await s.commit()
 
     # ── Doubt session logs ────────────────────────────────────────────────────
@@ -554,16 +631,17 @@ class MemoryStore:
         latency_ms: Optional[int] = None,
     ) -> None:
         async with self._session() as s:
-            s.add(DoubtSession(
-                student_id=uuid.UUID(student_id),
-                professor_id=professor_id,
-                doubt_question=doubt_question,
-                explanation=explanation,
-                follow_up_questions=follow_up_questions,
-                suggested_chapters=suggested_chapters,
-                rag_chunks_used=rag_chunks_used,
-                chapter_hint=chapter_hint,
-                latency_ms=latency_ms,
-            ))
+            s.add(
+                DoubtSession(
+                    student_id=uuid.UUID(student_id),
+                    professor_id=professor_id,
+                    doubt_question=doubt_question,
+                    explanation=explanation,
+                    follow_up_questions=follow_up_questions,
+                    suggested_chapters=suggested_chapters,
+                    rag_chunks_used=rag_chunks_used,
+                    chapter_hint=chapter_hint,
+                    latency_ms=latency_ms,
+                )
+            )
             await s.commit()
-            
