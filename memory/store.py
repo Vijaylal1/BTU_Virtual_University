@@ -38,7 +38,10 @@ settings = get_settings()
 
 class MemoryStore:
     def __init__(self) -> None:
-        self._engine = create_async_engine(settings.DATABASE_URL, echo=False, pool_pre_ping=True)
+        import re
+        db_url = re.sub(r"[?&]sslmode=\w+", "", settings.DATABASE_URL)
+        connect_args = {"ssl": True} if "neon.tech" in settings.DATABASE_URL else {}
+        self._engine = create_async_engine(db_url, echo=False, pool_pre_ping=True, connect_args=connect_args)
         self._session_factory = async_sessionmaker(self._engine, expire_on_commit=False)
 
     async def init_db(self) -> None:
@@ -563,3 +566,4 @@ class MemoryStore:
                 latency_ms=latency_ms,
             ))
             await s.commit()
+            
