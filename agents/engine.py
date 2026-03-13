@@ -113,6 +113,7 @@ class PipelineEngine:
         response = await self.dean.quality_gate(response, context)
 
         await self._persist_and_maybe_summarise(student_id, response, tier2.professor_id)
+        await self.memory.update_chapter_status(student_id, context.current_chapter, "in_progress")
         return response
 
     # ── Streaming pipeline (SSE) ──────────────────────────────────────────────
@@ -149,6 +150,7 @@ class PipelineEngine:
             source_agent=tier2.professor_id,
         )
         await self._maybe_summarise(student_id, tier2.professor_id)
+        await self.memory.update_chapter_status(student_id, tier1.student_context.current_chapter, "in_progress")
 
     # ── Library pipeline ──────────────────────────────────────────────────────
 
@@ -282,6 +284,9 @@ class PipelineEngine:
         )
 
         await self._maybe_summarise(student_id, resolved_professor_id)
+        await self.memory.update_chapter_status(
+            student_id, chapter_hint or context.current_chapter, "in_progress"
+        )
 
         return doubt_response
 

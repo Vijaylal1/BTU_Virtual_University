@@ -302,6 +302,16 @@ class MemoryStore:
 
     # ── Sprint helpers ────────────────────────────────────────────────────────
 
+    async def get_latest_sprint(self, student_id: str) -> Optional[Sprint]:
+        async with self._session() as s:
+            result = await s.execute(
+                select(Sprint)
+                .where(Sprint.student_id == uuid.UUID(student_id))
+                .order_by(Sprint.week_number.desc())
+                .limit(1)
+            )
+            return result.scalar_one_or_none()
+
     async def get_active_sprint(self, student_id: str) -> Optional[Sprint]:
         async with self._session() as s:
             result = await s.execute(

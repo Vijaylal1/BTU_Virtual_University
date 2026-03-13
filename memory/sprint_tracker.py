@@ -15,6 +15,8 @@ class SprintTracker:
     async def get_status(self, student_id: str) -> dict:
         sprint = await self.memory.get_active_sprint(student_id)
         if not sprint:
+            sprint = await self.memory.get_latest_sprint(student_id)
+        if not sprint:
             return {"week": 1, "logged": 0.0, "target": 15.0, "status": "not_started", "pct": 0}
         pct = min(100, int((sprint.hours_logged / sprint.target_hours) * 100))
         return {
